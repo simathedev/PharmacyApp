@@ -35,6 +35,11 @@ const Form = () => {
   const validationApprovedSchema = yup.object().shape({
     approved:yup.string(),
   });
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
   
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -61,7 +66,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
 
   const fetchMedications = async () => {
     try {
-      const response = await fetch('http://localhost:3001/medication/getMedications', {
+      const response = await fetch(`${apiUrlSegment}/medication/getMedications`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -82,7 +87,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
 
   const fetchPharmacies = async () => {
     try {
-      const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+      const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,7 +107,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
   };
   const fetchPrescription = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/prescription/getPharmacyPrescription/${id}`, {
+      const response = await fetch(`${apiUrlSegment}/prescription/getPharmacyPrescription/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -198,7 +203,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
 
   const updatePrescription = async (values, onSubmitProps) => {
     try {
-      const prescriptionResponse = await fetch(`http://localhost:3001/prescription/updatePrescription/${id}`, {
+      const prescriptionResponse = await fetch(`${apiUrlSegment}/prescription/updatePrescription/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -49,18 +49,24 @@ const searchParams = new URLSearchParams(location.search);
 const approvedOutcome = searchParams.get('approved');
 console.log("search params scripts:",approvedOutcome);
 
+let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+`https://pharmacy-app-api.vercel.app`
+:
+`http://localhost:3001`
+
 const fetchScripts = async () => {
   setIsLoading(true);
   try {
     let apiUrl;
+
       let pharmacyId;
       pharmacyId = selectedPharmacy?._id;
       console.log("pharmacy id: ",pharmacyId);
       if(role==='pharmacist'&&selectedPharmacy){
-        apiUrl=`http://localhost:3001/prescription/getPrescriptions/${pharmacyId}` 
+        apiUrl=`${apiUrlSegment}/prescription/getPrescriptions/${pharmacyId}` 
       }
       else if (role==='admin'){
-        apiUrl="http://localhost:3001/prescription/getPrescriptions"
+        apiUrl="${apiUrlSegment}/prescription/getPrescriptions"
       }
     const response = await fetch(apiUrl, {
       method: "GET",
@@ -100,7 +106,7 @@ const fetchScripts = async () => {
     if (deleteItemId) {
         const id=deleteItemId
         
-        const response = await fetch(`http://localhost:3001/prescription/deletePrescription/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/prescription/deletePrescription/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,

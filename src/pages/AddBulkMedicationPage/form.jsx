@@ -36,6 +36,7 @@ const Form = () => {
   const [ selectedPharmacyData,  setSelectedPharmacyData] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isPermitted=role==='pharmacist'||role==='admin';
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -43,6 +44,11 @@ const Form = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
 
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -103,7 +109,7 @@ const Form = () => {
 useEffect(() => {
   const fetchPharmacies = async () => {
     try {
-      const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+      const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -128,7 +134,7 @@ useEffect(() => {
       console.log("values in medication fetch:",values)
       console.log('testing: ',JSON.stringify(values, null, 2));
    const medicationResponse=await fetch(
-      `http://localhost:3001/medication/addBulkMedication`,
+      `${apiUrlSegment}/medication/addBulkMedication`,
       {
         method: "POST",
         headers: {

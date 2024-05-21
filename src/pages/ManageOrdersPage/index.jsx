@@ -48,19 +48,25 @@ const ManageOrdersPage = () => {
     const orderStatus = searchParams.get('orderStatus');
     console.log("searchParmas: ",orderStatus);
 
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const fetchOrders = async () => {
     setIsLoading(true);
     try {
       let apiUrl;
+    
       let pharmacyId;
       pharmacyId = selectedPharmacy._id;
       console.log("pharmacy id: ",pharmacyId);
       if(selectedPharmacy&&role==='pharmacist'){
-        apiUrl=`http://localhost:3001/order/getOrders/${pharmacyId}`
+        apiUrl=`${apiUrlSegment}/order/getOrders/${pharmacyId}`
       }
       else if(role==='admin')
       {
-        apiUrl="http://localhost:3001/order/getOrders";
+        apiUrl=`${apiUrlSegment}/order/getOrders`;
       }
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -99,7 +105,7 @@ const ManageOrdersPage = () => {
     if (deleteItemId) {
         const id=deleteItemId
         
-        const response = await fetch(`http://localhost:3001/order/deleteOrder/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/order/deleteOrder/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,

@@ -74,10 +74,16 @@ const Form = () => {
   const isPharmacist = userType === "pharmacist";
   const isAdmin=userType==="admin";
   const token = useSelector((state) => state.auth.token);
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   useEffect(() => {
     const fetchPharmacies = async () => {
       try {
-        const response = await fetch('http://localhost:3001/pharmacy/getPharmaciesRegistration', {
+        const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmaciesRegistration`, {
           method: "GET",
           /*headers: {
             Authorization: `Bearer ${token}`,
@@ -106,10 +112,11 @@ const Form = () => {
     formData.append("picture", values.picture.name);
     console.log("formdata in login: ", formData);
     let apiUrl;
+  
     if (userType === "user") {
-      apiUrl = "http://localhost:3001/auth/register";
+      apiUrl = `${apiUrlSegment}/auth/register`;
     } else if (userType === "pharmacist") {
-      apiUrl = "http://localhost:3001/auth/registerPharmacist";
+      apiUrl = `${apiUrlSegment}/auth/registerPharmacist`;
     }
     console.log('apiurl: ', apiUrl);
     

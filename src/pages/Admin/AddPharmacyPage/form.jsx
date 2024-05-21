@@ -39,6 +39,12 @@ import Loading from 'components/Loading';
       closeTime: yup.string().required('Closing time is required'),
       picture: yup.string(),
     });
+    
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
     const token = useSelector((state) => state.auth.token);
 
     const initialValuesPharmacy = {
@@ -59,7 +65,7 @@ import Loading from 'components/Loading';
         }
        formData.append("picture", values.picture.name);
       const pharmacyResponse=await fetch(
-        `http://localhost:3001/pharmacy/addPharmacy`,
+        `${apiUrlSegment}/pharmacy/addPharmacy`,
         {
           method:"POST",
           headers: { Authorization: `Bearer ${token}` },

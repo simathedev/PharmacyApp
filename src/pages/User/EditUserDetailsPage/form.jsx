@@ -72,11 +72,18 @@ const Form = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const[isLoading,setIsLoading]=useState(true);
   const[isSaving,setIsSaving]=useState(false);
   const token = useSelector((state) => state.auth.token);
   const user = useSelector((state) => state.auth.user);
   const role=useSelector((state)=>state.auth.role);
+
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [responseData,setResponseData]=useState([]);
   const [initialValues, setInitialValues] = useState({});
@@ -90,15 +97,15 @@ const Form = () => {
     let fetchStatement;
     if(role==='admin')
     {
-     fetchStatement= `http://localhost:3001/admin/updateAdminInfo/${id}`
+     fetchStatement= `${apiUrlSegment}/admin/updateAdminInfo/${id}`
     }
     else if(role==='pharmacist')
     {
-      fetchStatement=`http://localhost:3001/pharmacist/updatePharmacistInfo/${id}`
+      fetchStatement=`${apiUrlSegment}/pharmacist/updatePharmacistInfo/${id}`
     }
     else
     {
-      fetchStatement=`http://localhost:3001/user/updatePassword/${id}`
+      fetchStatement=`${apiUrlSegment}/user/updatePassword/${id}`
 
     }
     const passwordResponse = await fetch(fetchStatement, {
@@ -145,15 +152,15 @@ const Form = () => {
       let fetchStatement;
       if(role==='admin')
       {
-       fetchStatement= `http://localhost:3001/admin/updateAdminInfo/${id}`
+       fetchStatement= `${apiUrlSegment}/admin/updateAdminInfo/${id}`
       }
       else if(role==='pharmacist')
       {
-        fetchStatement=`http://localhost:3001/pharmacist/updatePharmacistInfo/${id}`
+        fetchStatement=`${apiUrlSegment}/pharmacist/updatePharmacistInfo/${id}`
       }
       else
       {
-        fetchStatement=`http://localhost:3001/user/updateBasicInfo/${id}`
+        fetchStatement=`${apiUrlSegment}/user/updateBasicInfo/${id}`
 
       }
     
@@ -197,7 +204,7 @@ const Form = () => {
 
 
         const address = async (concatenatedAddress, onSubmitProps) => {
-            const addressResponse = await fetch(`http://localhost:3001/user/updateAddress/${id}`, {
+            const addressResponse = await fetch(`${apiUrlSegment}/user/updateAddress/${id}`, {
               method: "PUT",
               headers: {  Authorization: `Bearer ${token}`,"Content-Type": "application/json" },
               body: JSON.stringify(concatenatedAddress),
@@ -217,15 +224,15 @@ const Form = () => {
               let fetchStatement;
               if(role==='admin')
               {
-               fetchStatement= `http://localhost:3001/admin/${id}`
+               fetchStatement= `${apiUrlSegment}/admin/${id}`
                          }
               else if(role==='pharmacist')
               {
-                fetchStatement=`http://localhost:3001/pharmacist/getPharmacist/${id}`
+                fetchStatement=`${apiUrlSegment}/pharmacist/getPharmacist/${id}`
                           }
               else
               {
-                fetchStatement=`http://localhost:3001/user/getUser/${id}`
+                fetchStatement=`${apiUrlSegment}/user/getUser/${id}`
   
               }
               const apiUrl=fetchStatement;

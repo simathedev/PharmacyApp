@@ -65,14 +65,18 @@ const ManageMedicationPage = () => {
     setIsLoading(true);
     try {
       let apiUrl;
+      let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+      `https://pharmacy-app-api.vercel.app`
+      :
+      `http://localhost:3001`
       let pharmacyId;
       pharmacyId = selectedPharmacy._id;
       console.log("pharmacy id: ",pharmacyId);
       if(role==='pharmacist'&&selectedPharmacy){
-        apiUrl=`http://localhost:3001/medication/getMedications/${pharmacyId}`
+        apiUrl=`${apiUrlSegment}/medication/getMedications/${pharmacyId}`
       }
       else if(role==='admin'){
-        apiUrl="http://localhost:3001/medication/getMedications"
+        apiUrl=`${apiUrlSegment}/medication/getMedications`
       }
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -113,7 +117,7 @@ const ManageMedicationPage = () => {
     if (deleteItemId) {
         const id=deleteItemId
         
-        const response = await fetch(`http://localhost:3001/medication/deleteMedication/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/medication/deleteMedication/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -334,7 +338,7 @@ const ManageMedicationPage = () => {
             height="110px"
             alt="medication"
             style={{marginTop: "0.75rem",borderRadius:'10%' }}
-            src={`http://localhost:3001/assets/${medication.picture}`}
+            src={`${apiUrlSegment}/assets/${medication.picture}`}
           />
             </Grid>
             <Link to={`/view/medication/${medication._id}` } style={{textDecoration:'none'}}>

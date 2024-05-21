@@ -44,6 +44,11 @@ import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
     const token = useSelector((state) => state.auth.token);
     const role = useSelector((state) => state.auth.role);
       
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
       const makeAdmin = () => {
         setAdmin((prevAdmin) => !prevAdmin);
       };
@@ -134,7 +139,7 @@ import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
     const createAdmin=async(values,onSubmitProps)=>{
       try {
       const userResponse=await fetch(
-        `http://localhost:3001/auth/registerAdmin`,
+        `${apiUrlSegment}/auth/registerAdmin`,
         {
           method:"POST",
           headers: {

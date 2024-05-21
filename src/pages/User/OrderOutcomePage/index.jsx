@@ -13,6 +13,12 @@ const Index = () => {
   const [order, setOrder] = useState({});
   const [loading, setLoading] = useState(false);
   const orderID = localStorage.getItem('newOrderId');
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -30,7 +36,7 @@ const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/order/getorder/${orderID}`, {
+        const response = await fetch(`${apiUrlSegment}/order/getorder/${orderID}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

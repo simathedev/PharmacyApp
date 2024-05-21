@@ -41,6 +41,11 @@ const Form = () => {
       orderStatus:yup.string().required("Order status is required"),
       });
 
+      let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+      `https://pharmacy-app-api.vercel.app`
+      :
+      `http://localhost:3001`
+
   const { palette } = useTheme();
   const {id} = useParams();
   const navigate = useNavigate();
@@ -63,7 +68,7 @@ const Form = () => {
   useEffect(() => {
     const fetchMedications = async () => {
         try {
-          const response = await fetch('http://localhost:3001/medication/getMedications', {
+          const response = await fetch(`${apiUrlSegment}/medication/getMedications`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -84,7 +89,7 @@ const Form = () => {
       };
       const fetchOrder = async () => {
         try {
-          const response = await fetch(`http://localhost:3001/order/getPharmacyOrder/${id}`, {
+          const response = await fetch(`${apiUrlSegment}/order/getPharmacyOrder/${id}`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -107,7 +112,7 @@ const Form = () => {
 
       const fetchPharmacies = async () => {
         try {
-          const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+          const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -202,7 +207,7 @@ const Form = () => {
 
   const updateOrder = async (values, onSubmitProps) => {
     try {
-      const userResponse = await fetch(`http://localhost:3001/order/updateOrder/${id}`, {
+      const userResponse = await fetch(`${apiUrlSegment}/order/updateOrder/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

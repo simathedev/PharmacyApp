@@ -25,6 +25,11 @@ const Index = () => {
   //const [loading, setLoading] = useState(true);
   const [isLoading,setIsLoading]=useState(true);
   const isPermitted=role==='pharmacist'||role==='admin';
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
   
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
@@ -38,7 +43,7 @@ const Index = () => {
   const fetchPharmacists = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/pharmacist/getPharmacists", {
+      const response = await fetch(`${apiUrlSegment}/pharmacist/getPharmacists`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -69,7 +74,7 @@ const Index = () => {
     if (deleteItemId) {
         const id=deleteItemId
         
-        const response = await fetch(`http://localhost:3001/pharmacist/deletePharmacist/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/pharmacist/deletePharmacist/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -165,7 +170,7 @@ if(isLoading)
             height="100px"
             alt="medication"
             style={{marginTop: "0.75rem",borderRadius:'50%',objectFit:'cover' }}
-            src={`http://localhost:3001/assets/${pharmacist.picture}`}
+            src={`${apiUrlSegment}/assets/${pharmacist.picture}`}
           />:
           <FaUserDoctor/>
          }

@@ -24,6 +24,11 @@ const Index = () => {
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const token = useSelector((state) => state.auth.token);
   const user = useSelector((state) => state.auth.user);
   console.log('user in profile data:',user)
@@ -42,15 +47,15 @@ const Index = () => {
       let fetchStatement;
       if(role==='admin')
       {
-       fetchStatement= `http://localhost:3001/admin/${id}`
+       fetchStatement= `${apiUrlSegment}/admin/${id}`
                  }
       else if(role==='pharmacist')
       {
-        fetchStatement=`http://localhost:3001/pharmacist/getPharmacist/${id}`
+        fetchStatement=`${apiUrlSegment}/pharmacist/getPharmacist/${id}`
                   }
       else
       {
-        fetchStatement=`http://localhost:3001/user/getUser/${id}`
+        fetchStatement=`${apiUrlSegment}/user/getUser/${id}`
   
       }
       const apiUrl=fetchStatement;
@@ -125,7 +130,7 @@ const Index = () => {
       height={isNonMobile ? "140px" : "100px"}
       alt="medication"
       style={{ marginTop: "0.75rem", borderRadius: '50%', objectFit: 'cover' }} // Apply objectFit here
-      src={`http://localhost:3001/assets/${responseData?.picture}`}
+      src={`${apiUrlSegment}/assets/${responseData?.picture}`}
     />
     :
     <FaUserCircle fontSize='6rem' />

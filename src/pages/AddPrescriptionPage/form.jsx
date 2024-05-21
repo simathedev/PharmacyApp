@@ -43,6 +43,11 @@ const Form = () => {
   approved: false, 
   };
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const [users, setUsers] = useState([]);
   const [medications, setMedications] = useState([]);
   const [pharmacies, setPharmacies] = useState([]);
@@ -59,7 +64,7 @@ const Form = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:3001/user/getUsers', {
+        const response = await fetch(`${apiUrlSegment}/user/getUsers`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,7 +85,7 @@ const Form = () => {
    
       const fetchPharmacies = async () => {
         try {
-          const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+          const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -116,7 +121,7 @@ const Form = () => {
           pharmacyId = selectedPharmacy._id;
         }
         if (pharmacyId) {
-          const response = await fetch(`http://localhost:3001/medication//getMedications/${pharmacyId}`, {
+          const response = await fetch(`${apiUrlSegment}/medication//getMedications/${pharmacyId}`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -141,7 +146,7 @@ const Form = () => {
 
   const prescription = async (values, onSubmitProps) => {
     try {
-      const prescriptionResponse = await fetch('http://localhost:3001/prescription/addPrescription', {
+      const prescriptionResponse = await fetch(`${apiUrlSegment}/prescription/addPrescription`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

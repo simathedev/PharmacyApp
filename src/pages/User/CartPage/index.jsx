@@ -31,6 +31,11 @@ const Index = () => {
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const increaseItemQuantity = (item) => {
     dispatch(increaseQuantity(item));
    };
@@ -82,7 +87,7 @@ const Index = () => {
                   height={isNonMobile?"100px":"60px"}
                   alt="item"
                   style={{marginTop: "0.75rem",borderRadius:'10%', }}
-                  src={`http://localhost:3001/assets/${item.picture}`}
+                  src={`${apiUrlSegment}/assets/${item.picture}`}
                 />
                 {/* Display item details */}
                 <Box sx={{display:'flex',flexDirection:'column'}}>

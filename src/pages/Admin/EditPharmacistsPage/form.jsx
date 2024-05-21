@@ -42,7 +42,10 @@ const Form = () => {
     password: yup.string().required('Password is required').min(5, 'Password should be at least 5 characters').max(10, 'Password should be at most 10 characters'),
   });
   
-
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
 
   const [pharmacist, setPharmacist] = useState({});
   const [pharmacies, setPharmacies] = useState([]);
@@ -60,7 +63,7 @@ const Form = () => {
   useEffect(() => {
     const fetchPharmacist = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/pharmacist/getPharmacist/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/pharmacist/getPharmacist/${id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -79,7 +82,7 @@ const Form = () => {
     };
     const fetchPharmacies = async () => {
       try {
-        const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+        const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -103,7 +106,7 @@ const Form = () => {
 
   const updatePharmacist = async (values, onSubmitProps) => {
     try {
-      const pharmacistResponse = await fetch(`http://localhost:3001/pharmacist/updatePharmacist/${id}`, {
+      const pharmacistResponse = await fetch(`${apiUrlSegment}/pharmacist/updatePharmacist/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

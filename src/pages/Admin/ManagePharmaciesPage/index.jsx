@@ -45,11 +45,16 @@ const Index = () => {
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
 
   const fetchPharmacies = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/pharmacy/getPharmacies", {
+      const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,7 +85,7 @@ const Index = () => {
     if (deleteItemId) {
         const id=deleteItemId
         
-        const response = await fetch(`http://localhost:3001/pharmacy/deletePharmacy/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/pharmacy/deletePharmacy/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -169,7 +174,7 @@ const Index = () => {
             height="100px"
             alt="medication"
             style={{marginTop: "0.75rem",borderRadius:'50%',objectFit:'cover'}}
-            src={`http://localhost:3001/assets/${pharmacy.picture}`}
+            src={`${apiUrlSegment}/assets/${pharmacy.picture}`}
           />
             </Grid>
             <Link to={`/view/pharmacy/${pharmacy?._id}`} style={{textDecoration:'none'}}>

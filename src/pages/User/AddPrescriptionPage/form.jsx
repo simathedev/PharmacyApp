@@ -48,11 +48,17 @@ const Form = () => {
   const selectedPharmacy=useSelector((state)=>state.auth.pharmacy);
  const user=useSelector((state)=>state.auth.user)
   const { palette } = useTheme();
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   useEffect(() => {
    
     const fetchMedications = async () => {
         try {
-          const response = await fetch('http://localhost:3001/medication/getMedications', {
+          const response = await fetch(`${apiUrlSegment}/medication/getMedications`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -71,7 +77,7 @@ const Form = () => {
       };
       const fetchPharmacies = async () => {
         try {
-            const response = await fetch("http://localhost:3001/pharmacy/getPharmacies", {
+            const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -98,7 +104,7 @@ const Form = () => {
 
   const prescription = async (values, onSubmitProps) => {
     try {
-      const prescriptionResponse = await fetch('http://localhost:3001/prescription/addUserPrescription', {
+      const prescriptionResponse = await fetch(`${apiUrlSegment}/prescription/addUserPrescription`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

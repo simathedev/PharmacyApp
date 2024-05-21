@@ -36,6 +36,12 @@ import Loading from 'components/Loading';
     const [pharmacies, setPharmacies] = useState([]);
     const [isLoading,setIsLoading]=useState(true);
     const [isSaving,setIsSaving]=useState(false);
+
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
     const { palette } = useTheme();
     const medicationSchema = yup.object().shape({
       name: yup.string().required('medication name is required'),
@@ -61,7 +67,7 @@ import Loading from 'components/Loading';
     useEffect(() => {
       const fetchPharmacies = async () => {
         try {
-          const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+          const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
@@ -95,7 +101,7 @@ import Loading from 'components/Loading';
        formData.append("picture", values.picture.name);
         //console.log ("formData medication:",formData)
      const medicationResponse=await fetch(
-        `http://localhost:3001/medication/addMedication`,
+        `${apiUrlSegment}/medication/addMedication`,
         {
           method:"POST",
           headers: { Authorization: `Bearer ${token}` },

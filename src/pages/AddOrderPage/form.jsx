@@ -51,13 +51,18 @@ import {
    pharmacy: '', 
   orderStatus:''
     };
+
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
     const [orders, setOrders] = useState([]);
     const [users, setUsers] = useState([]);
     const [isLoading,setIsLoading]=useState(true);
     const [isSaving,setIsSaving]=useState(false);
     const [medications, setMedications] = useState([]);
     const [pharmacies, setPharmacies] = useState([]);
-
     const [deliveryOption, setDeliveryOption] = useState('');
     const [selectedOrderPharmacy,setSelectedOrderPharmacy]=useState('');
     const [selectedPharmacyId, setSelectedPharmacyId] = useState('');
@@ -70,10 +75,11 @@ import {
     const { palette } = useTheme();
     const navigate = useNavigate();
 
+
     useEffect(() => {
         const fetchUsers = async () => {
           try {
-            const response = await fetch('http://localhost:3001/user/getUsers', {
+            const response = await fetch(`${apiUrlSegment}/user/getUsers`, {
               method: 'GET',
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -94,7 +100,7 @@ import {
       
           const fetchPharmacies = async () => {
             try {
-              const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+              const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
                 method: "GET",
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -131,7 +137,7 @@ import {
               pharmacyId = selectedPharmacy._id;
             }
             if (pharmacyId) {
-              const response = await fetch(`http://localhost:3001/medication//getMedications/${pharmacyId}`, {
+              const response = await fetch(`${apiUrlSegment}/medication//getMedications/${pharmacyId}`, {
                 method: 'GET',
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -157,7 +163,7 @@ import {
     const order=async(values,onSubmitProps)=>{
       try {
       const orderResponse=await fetch(
-        `http://localhost:3001/order/addOrder`,
+        `${apiUrlSegment}/order/addOrder`,
         {
           method:"POST",
           headers: {

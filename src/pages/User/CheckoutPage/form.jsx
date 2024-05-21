@@ -50,6 +50,12 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
    pharmacy: '', 
   orderStatus:''
     };*/
+
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
     const [orders, setOrders] = useState([]);
     const [users, setUsers] = useState([]);
     const [medications, setMedications] = useState([]);
@@ -66,7 +72,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
     useEffect(() => {
           const fetchPharmacies = async () => {
             try {
-              const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+              const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
                 method: "GET",
                 headers: {
                   Authorization: `Bearer ${token}`,

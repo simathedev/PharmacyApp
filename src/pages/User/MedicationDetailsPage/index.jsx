@@ -18,6 +18,12 @@ import Loading from "components/Loading";
 
 const Index = () => {
   const {id}=useParams();
+  
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -25,6 +31,7 @@ const Index = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
+
   const dispatch =useDispatch();
   console.log('medication product ID:',id);
   const token = useSelector((state) => state.auth.token);
@@ -39,7 +46,7 @@ const Index = () => {
   useEffect(() => {
     const fetchMedicationDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/medication/getMedication/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/medication/getMedication/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -100,7 +107,7 @@ if(isLoading)
             height={isNonMobile?"250px":"120px"}
             alt="medication"
             style={{marginTop: "0.75rem",borderRadius:'10%', px:5 }}
-            src={`http://localhost:3001/assets/${medication?.picture}`}
+            src={`${apiUrlSegment}/assets/${medication?.picture}`}
           />
 
 

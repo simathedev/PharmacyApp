@@ -11,6 +11,11 @@ import CartNavbar from 'components/cartnavbar';
 const Index = () => {
   const dispatch = useDispatch();
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -59,7 +64,7 @@ const Index = () => {
                   height={isNonMobile?"100px":"60px"}
                   alt="item"
                   style={{marginTop: "0.75rem",borderRadius:'10%', }}
-                  src={`http://localhost:3001/assets/${item.picture}`}
+                  src={`${apiUrlSegment}/assets/${item.picture}`}
                 />
                 {/* Display item details */}
                 <Box sx={{display:'flex',flexDirection:'column'}}>

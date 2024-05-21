@@ -19,6 +19,12 @@ const Index = () => {
   const [prescription, setPrescription] = useState([]);
   const [isLoading,setIsLoading]=useState(false);
   const isNonMobile = useMediaQuery("(min-width:600px)");
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -31,7 +37,7 @@ const Index = () => {
     const fetchPrescription = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/prescription/getPrescription/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/prescription/getPrescription/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

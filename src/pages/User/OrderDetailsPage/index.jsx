@@ -21,7 +21,13 @@ const Index = () => {
   let userId;
 
   userId=user._id;
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -34,7 +40,7 @@ const Index = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/order/getorder/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/order/getorder/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

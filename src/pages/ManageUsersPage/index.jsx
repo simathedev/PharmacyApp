@@ -28,6 +28,11 @@ const Index = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isPermitted = role === 'admin' || role === 'pharmacist';
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -39,7 +44,7 @@ const Index = () => {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/user/getUsers", {
+      const response = await fetch(`${apiUrlSegment}/user/getUsers`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -95,7 +100,7 @@ const Index = () => {
     if (deleteItemId) {
         const id=deleteItemId
         
-        const response = await fetch(`http://localhost:3001/user/deleteUser/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/user/deleteUser/${id}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,

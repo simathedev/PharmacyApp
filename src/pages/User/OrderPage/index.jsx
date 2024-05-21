@@ -22,6 +22,12 @@ const Index = () => {
   const user = useSelector((state) => state.auth.user);
   let userId;
   userId=user?._id;
+
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLargeScreen= useMediaQuery("(min-width:900px)");
   const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
@@ -39,7 +45,7 @@ const Index = () => {
     const fetchOrders = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/order/getUserOrders/${userId}`, {
+        const response = await fetch(`${apiUrlSegment}/order/getUserOrders/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

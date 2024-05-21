@@ -27,6 +27,12 @@ const Index = () => {
     const [deleteItemId,setDeleteItemId]=useState(null)
     const [responseData,setResponseData]=useState([]);
     const navigate = useNavigate();
+
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -115,7 +121,7 @@ const Index = () => {
           return;
       }
       
-      const response = await fetch(`http://localhost:3001/${endpoint}`, {
+      const response = await fetch(`${apiUrlSegment}/${endpoint}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -167,7 +173,7 @@ const Index = () => {
             
             return;
         }
-        const response = await fetch(`http://localhost:3001/${endpoint}`, {
+        const response = await fetch(`${apiUrlSegment}/${endpoint}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -208,7 +214,7 @@ const Index = () => {
 
   const updateOrderStatus = async (id, status) => {
     try {
-      const orderStatusResponse = await fetch(`http://localhost:3001/order/updateOrder/${id}`, {
+      const orderStatusResponse = await fetch(`${apiUrlSegment}/order/updateOrder/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -262,7 +268,7 @@ const Index = () => {
 
  const updateApprovedScript = async (id) => {
     try {
-      const scriptApprovedResponse = await fetch(`http://localhost:3001/prescription/updatePrescription/${id}`, {
+      const scriptApprovedResponse = await fetch(`${apiUrlSegment}/prescription/updatePrescription/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

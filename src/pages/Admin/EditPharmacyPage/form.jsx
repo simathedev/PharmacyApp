@@ -47,8 +47,13 @@ const Form = () => {
   });
   const [initialValues, setInitialValues] = useState({});
   const [validationSchema, setValidationSchema] = useState(yup.object());
- const navigate=useNavigate();
+ 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
 
+  const navigate=useNavigate();
   const [users, setUsers] = useState([]);
   const [medications, setMedications] = useState([]);
   const [pharmacy, setPharmacy] = useState([]);
@@ -66,7 +71,7 @@ const Form = () => {
     const fetchUsers = async () => {
       //code to fetch users//
       try {
-        const response = await fetch('http://localhost:3001/user/getUsers', {
+        const response = await fetch(`http://localhost:3001/user/getUsers`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -85,7 +90,7 @@ const Form = () => {
     };
     const fetchMedications = async () => {
         try {
-          const response = await fetch('http://localhost:3001/medication/getMedications', {
+          const response = await fetch(`http://localhost:3001/medication/getMedications`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -106,7 +111,7 @@ const Form = () => {
       const fetchPharmacy = async () => {
         try {
           setIsLoading(true);
-          const response = await fetch(`http://localhost:3001/pharmacy/getPharmacy/${id}`, {
+          const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacy/${id}`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,
@@ -214,7 +219,7 @@ setInitialValues({
   const updatePharmacy = async (values, onSubmitProps) => {
     try {
       setIsSaving(true)
-      const pharmacyResponse = await fetch(`http://localhost:3001/pharmacy/updatePharmacy/${id}`, {
+      const pharmacyResponse = await fetch(`${apiUrlSegment}/pharmacy/updatePharmacy/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

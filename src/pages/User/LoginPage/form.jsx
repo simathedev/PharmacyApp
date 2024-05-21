@@ -31,6 +31,7 @@ const initialValuesLogin = {
 };
 
 const Form = () => {
+
   const [isLoading,setIsLoading]=useState(false);
   const { palette } = useTheme();
   const dispatch = useDispatch();
@@ -39,14 +40,19 @@ const Form = () => {
   let {userType}=useParams();
   console.log('usertype from useParams:',userType)
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const login = async (values, onSubmitProps) => {
     let apiUrl;
     if (userType === "user") {
-      apiUrl = "http://localhost:3001/auth/login";
+      apiUrl = `${apiUrlSegment}/auth/login`;
     } else if (userType === "pharmacist") {
-      apiUrl = "http://localhost:3001/auth/loginPharmacist";
+      apiUrl = `${apiUrlSegment}/auth/loginPharmacist`;
     } else if (userType === "admin") {
-      apiUrl = "http://localhost:3001/auth/loginAdmin";
+      apiUrl = `${apiUrlSegment}/auth/loginAdmin`;
     }
   
     try {

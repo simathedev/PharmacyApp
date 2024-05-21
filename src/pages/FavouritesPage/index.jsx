@@ -19,6 +19,11 @@ const Index = () => {
   const count = useSelector((state) => state.cart.count);
   const favorite = useSelector((state) => state.cart.favorite);
   const total = useSelector((state) => (state.cart.total).toFixed(2));
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+  
   const navigate =useNavigate();
   const [loading, setLoading] = useState(true);
  // console.log("items from state:",items)
@@ -65,7 +70,7 @@ const Index = () => {
                   height={isNonMobile?"100px":"60px"}
                   alt="item"
                   style={{marginTop: "0.75rem",borderRadius:'10%', }}
-                  src={`http://localhost:3001/assets/${item.picture}`}
+                  src={`${apiUrlSegment}/assets/${item.picture}`}
                 />
                 {/* Display item details */}
                 <Box sx={{display:'flex',flexDirection:'column'}}>

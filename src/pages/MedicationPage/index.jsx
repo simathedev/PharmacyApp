@@ -58,19 +58,26 @@ const MedicationPage = () => {
     const primary=theme.palette.primary.main;
 
     console.log('Category from search:', category);
+    
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
     useEffect(() => {
       setIsLoading(true);
       const fetchMedications = async () => {
         try {
           let apiUrl;
+         
           let pharmacyId;
           pharmacyId = selectedPharmacy._id;
           console.log("pharmacy id: ",pharmacyId);
           if(selectedPharmacy){
-            apiUrl=`http://localhost:3001/medication/getMedications/${pharmacyId}`
+            apiUrl=`${apiUrlSegment}/medication/getMedications/${pharmacyId}`
           }
           else{
-            apiUrl="http://localhost:3001/medication/getMedications"
+            apiUrl=`${apiUrlSegment}/medication/getMedications`
           }
           const response = await fetch(
             apiUrl, {
@@ -337,7 +344,7 @@ isNonMobile?
                   height={isNonMobile?"120px":"60px"}
                   alt="medication"
                   style={{marginTop: "0.75rem",borderRadius:'10%', }}
-                  src={`http://localhost:3001/assets/${medication.picture}`}
+                  src={`${apiUrlSegment}/assets/${medication.picture}`}
                 />
                 {/* Display medication details */}
                 <Box sx={{display:'flex',flexDirection:'column' }}>

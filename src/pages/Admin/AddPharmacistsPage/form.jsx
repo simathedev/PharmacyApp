@@ -56,10 +56,15 @@ import Loading from 'components/Loading';
     const token = useSelector((state) => state.auth.token);
     const isNonMobile = useMediaQuery("(min-width:600px)");
 
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   useEffect(() => {
     const fetchPharmacies = async () => {
       try {
-        const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+        const response = await fetch(`http://localhost:3001/pharmacy/getPharmacies`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -91,7 +96,7 @@ import Loading from 'components/Loading';
         }
        formData.append("picture", values.picture.name);
       const pharmacyResponse=await fetch(
-        `http://localhost:3001/pharmacist/addPharmacist`,
+        `${apiUrlSegment}/pharmacist/addPharmacist`,
         {
           method:"POST",
           headers: { Authorization: `Bearer ${token}` },

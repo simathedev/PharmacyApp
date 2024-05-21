@@ -41,6 +41,11 @@ const Form = () => {
     password: yup.string().required('Password is required'),
   });
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const role = useSelector((state) => state.auth.role);
   const isNonMobile = useMediaQuery("(min-width:600px)");
  const [initialValues, setInitialValues] = useState({});
@@ -60,7 +65,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
     const fetchUser = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`http://localhost:3001/user/getUser/${id}`, {
+        const response = await fetch(`${apiUrlSegment}/user/getUser/${id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -167,7 +172,7 @@ const handlePasswordClick = () => {
 
   const updateUser = async (values, onSubmitProps) => {
     try {
-      const userResponse = await fetch(`http://localhost:3001/user/updateUser/${id}`, {
+      const userResponse = await fetch(`${apiUrlSegment}/user/updateUser/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,

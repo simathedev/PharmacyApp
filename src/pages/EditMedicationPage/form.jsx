@@ -39,6 +39,11 @@ const Form = () => {
     inStock: yup.boolean().required('Stock availability is required'),
   });
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
   const [medicationData, setMedicationData] = useState({});
   const [users, setUsers] = useState([]);
   const [medications, setMedications] = useState([]);
@@ -61,7 +66,7 @@ const Form = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/user/getUsers', {
+      const response = await fetch(`${apiUrlSegment}/user/getUsers`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -81,7 +86,7 @@ const Form = () => {
   };
   const fetchMedications = async () => {
     try {
-      const response = await fetch('http://localhost:3001/medication/getMedications', {
+      const response = await fetch(`${apiUrlSegment}/medication/getMedications`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,7 +105,7 @@ const Form = () => {
   };
   const fetchMedication = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/medication/getMedication/${id}`, {
+      const response = await fetch(`${apiUrlSegment}/medication/getMedication/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -120,7 +125,7 @@ const Form = () => {
   };
   const fetchPharmacies = async () => {
     try {
-      const response = await fetch('http://localhost:3001/pharmacy/getPharmacies', {
+      const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -228,7 +233,7 @@ setIsLoading(false);
 
   const updateMedication = async (values, onSubmitProps) => {
     try {
-      const medicationResponse = await fetch(`http://localhost:3001/medication/updateMedication/${id}`, {
+      const medicationResponse = await fetch(`${apiUrlSegment}/medication/updateMedication/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
