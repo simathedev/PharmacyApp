@@ -23,6 +23,11 @@ import CloseIcon from '@mui/icons-material/Close';
 const Index = () => {
   const dispatch = useDispatch();
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -121,7 +126,7 @@ const stepValues={
 
     const fetchUser = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/user/getUser/${userID}`, {
+        const response = await fetch(`${apiUrlSegment}/user/getUser/${userID}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -239,7 +244,7 @@ const stepValues={
   const order=async(formValues)=>{
     try {
     const orderResponse=await fetch(
-      `http://localhost:3001/order/addOrder`,
+      `${apiUrlSegment}/order/addOrder`,
       {
         method:"POST",
         headers: {
@@ -325,7 +330,7 @@ const stepValues={
                    height={isNonMobile?"50px":"60px"}
                    alt="item"
                    style={{marginTop: "0.75rem",borderRadius:'10%', }}
-                   src={`http://localhost:3001/assets/${item.picture}`}
+                   src={`${apiUrlSegment}/assets/${item.picture}`}
                  />
           </Box>
            ))}

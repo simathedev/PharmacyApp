@@ -9,6 +9,7 @@ import FlexBetween from "./FlexBetween";
 import {setPharmacy} from 'state';
 import{clearCart} from 'cartState';
 import { MdLocalPharmacy } from "react-icons/md";
+import Loading from "./Loading";
 
 const NearbyPharmacy = () => {
 
@@ -22,6 +23,7 @@ const NearbyPharmacy = () => {
     const token = useSelector((state) => state.auth.token);
     const [pharmacies, setPharmacies] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const[isLoading,setIsLoading]=useState(true);
     const selectedPharmacy=useSelector((state)=>state.auth.pharmacy);
     const dispatch = useDispatch();
     const navigate=useNavigate();
@@ -39,6 +41,7 @@ const NearbyPharmacy = () => {
     useEffect(() => {
         const fetchPharmacies = async () => {
             try {
+                setIsLoading(true);
                 const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
                     method: "GET",
                     headers: {
@@ -47,13 +50,16 @@ const NearbyPharmacy = () => {
                     },
                 });
                 if (response.ok) {
+                    setIsLoading(false);
                     const pharmacyData = await response.json();
                     console.log("pharmacy data:", pharmacyData);
                     setPharmacies(pharmacyData);
                 } else {
+                    setIsLoading(false);
                     console.log("Failed to fetch pharmacies");
                 }
             } catch (error) {
+                setIsLoading(false);
                 console.error("Error fetching pharmacies:", error);
             }
         };
@@ -68,6 +74,11 @@ const NearbyPharmacy = () => {
     // Display only the first three pharmacies if search query is empty
     const displayedPharmacies = searchQuery ? filteredPharmacies : pharmacies.slice(0, 3);
     const isNonMobile = useMediaQuery("(min-width:600px)");
+
+    if(isLoading)
+    {
+    return <Loading/>
+    }
     return (
         <Box width={isNonMobile?'60%':'80%'} display='flex' flexDirection='column' alignItems='center' justifyContent='center'>
           {displayedPharmacies.length===0?(
