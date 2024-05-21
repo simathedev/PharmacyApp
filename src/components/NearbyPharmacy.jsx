@@ -11,6 +11,13 @@ import{clearCart} from 'cartState';
 import { MdLocalPharmacy } from "react-icons/md";
 
 const NearbyPharmacy = () => {
+
+    
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+
     const { palette } = useTheme();
     const token = useSelector((state) => state.auth.token);
     const [pharmacies, setPharmacies] = useState([]);
@@ -32,7 +39,7 @@ const NearbyPharmacy = () => {
     useEffect(() => {
         const fetchPharmacies = async () => {
             try {
-                const response = await fetch("http://localhost:3001/pharmacy/getPharmacies", {
+                const response = await fetch(`${apiUrlSegment}/pharmacy/getPharmacies`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -117,7 +124,7 @@ const NearbyPharmacy = () => {
                              height={isNonMobile?"80px":"45px"}
                              alt="pharmacy"
                              style={{ marginTop: "0.75rem", marginBottom:"0.35rem",borderRadius: '10%' }}
-                             src={`http://localhost:3001/assets/${pharmacy.picture}`}
+                             src={`${apiUrlSegment}/assets/${pharmacy.picture}`}
                          />
                          <Typography variant="body1" fontWeight='bold' fontSize={!isNonMobile&&'10px'}>{pharmacy.name}</Typography>
                          <Typography variant="body1" fontSize={!isNonMobile&&'10px'}>{pharmacy.openTime}-{pharmacy.closeTime}</Typography>
