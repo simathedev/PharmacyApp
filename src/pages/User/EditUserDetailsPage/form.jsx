@@ -16,6 +16,10 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import { toast } from 'react-toastify';
+import ProgressLoadWidget from "components/widgets/ProgressLoadWidget";
+import { DataArray } from "@mui/icons-material";
+import Loading from "components/Loading";
+import FlexBetween from "components/FlexBetween";
 
 
 
@@ -30,6 +34,7 @@ const passwordSchema = yup.object().shape({
 const basicInfoSchema= yup.object().shape({
     email: yup.string().required('Email is required').email('Enter a valid email'),
     phoneNumber: yup.string().max(10, 'Phone number should be 10 digits'),
+    picture: yup.string(),
   });
   const addressSchema = yup.object().shape({
     streetAddress: yup.string().required('Street address is required'),
@@ -57,8 +62,18 @@ const Form = () => {
     const { field } = useParams();
     console.log('field: ',field);
   const { palette } = useTheme();
+  const theme = useTheme();
+    const neutralLight = theme.palette.neutral.light;
+    const dark = theme.palette.neutral.dark;
+    const background = theme.palette.background.default;
+    const primaryLight = theme.palette.primary.light;
+    const alt = theme.palette.background.alt;
+    const primary=theme.palette.primary.main;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const[isLoading,setIsLoading]=useState(true);
+  const[isSaving,setIsSaving]=useState(false);
   const token = useSelector((state) => state.auth.token);
   const user = useSelector((state) => state.auth.user);
   const role=useSelector((state)=>state.auth.role);
@@ -69,7 +84,7 @@ const Form = () => {
   console.log("role in edit page: ",role);
   console.log("pharmacist in edit page")
   let id;
-  id=user._id;
+  id=user?._id;
 
   const password = async (values, onSubmitProps) => {
     let fetchStatement;
@@ -148,6 +163,7 @@ const Form = () => {
           body: JSON.stringify(values),
         });
         const savedUser=await basicInfoResponse.json();
+        console.log("basic info reponse: ",savedUser);
     onSubmitProps.resetForm();
 
     if (savedUser){
@@ -195,35 +211,51 @@ const Form = () => {
           }
 
           const getUserDetails=async(id)=>{
-            console.log("id:",id)
-            let fetchStatement;
-            if(role==='admin')
-            {
-             fetchStatement= `http://localhost:3001/admin/${id}`
-                       }
-            else if(role==='pharmacist')
-            {
-              fetchStatement=`http://localhost:3001/pharmacist/getPharmacist/${id}`
+            try{
+              setIsLoading(true);
+              console.log("id:",id)
+              let fetchStatement;
+              if(role==='admin')
+              {
+               fetchStatement= `http://localhost:3001/admin/${id}`
+                         }
+              else if(role==='pharmacist')
+              {
+                fetchStatement=`http://localhost:3001/pharmacist/getPharmacist/${id}`
+                          }
+              else
+              {
+                fetchStatement=`http://localhost:3001/user/getUser/${id}`
+  
+              }
+              const apiUrl=fetchStatement;
+                      const response = await fetch(
+                        apiUrl, {
+                          method: "GET",
+                          headers: {
+                              Authorization: `Bearer ${token}`,
+                              "Content-Type": "application/json",
+                          },
+                      });
+                      const data = await response.json();
+          
+                        if(response.ok)
+                        {
+                          setIsLoading(false);
+                          setResponseData(data);
+                          console.log("response data from update user page: ",data);
+                       
                         }
-            else
-            {
-              fetchStatement=`http://localhost:3001/user/getUser/${id}`
-
             }
-            const apiUrl=fetchStatement;
-                    const response = await fetch(
-                      apiUrl, {
-                        method: "GET",
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json",
-                        },
-                    });
-                    const data = await response.json();
-                    setResponseData(data);
-                    
-                    console.log("response data from update user page: ",data);
+            catch(error)
+            {
+              setIsLoading(false);
+              console.error("error fetching user details: ",error)
+            }
             
+                  
+          
+                 
             
                   
                 }
@@ -254,6 +286,7 @@ const Form = () => {
                               postalCode:"",
                               password: "",
                               confirmPassword: "",
+                              picture:responseData?.picture|| "",
                             })
                           
                             switch (field) {
@@ -262,6 +295,7 @@ const Form = () => {
                                 setInitialValues({
                                   email: responseData?.email || "",
                                   phoneNumber: responseData?.phoneNumber || "",
+                                  picture:responseData?.picture|| "",
                                 });
                                 setValidationSchema(basicInfoSchema);
                               
@@ -305,7 +339,7 @@ const Form = () => {
                                 break;
                             }
                           }
-                          
+                          setIsLoading(false);
                         }
                           useEffect(() => {
                             //console.log("field in profile page: ",field)
@@ -314,8 +348,11 @@ const Form = () => {
                           
 
           const handleFormSubmit = async (values, onSubmitProps) => {
+            setIsSaving(true);
+            console.log("values: ", values)
             switch (field) {
               case "basicInfo":
+                console.log("basic info: ",values)
                 await basicInfo(values, onSubmitProps);
                 break;
               case "address":
@@ -336,6 +373,34 @@ const Form = () => {
   await basicInfo(values, onSubmitProps);
 
   };*/}
+  if (isLoading)
+  {
+    return <Loading/>
+  }
+  if(isSaving)
+  {
+    return (
+      <>
+       if(field==='address')
+      {
+        <ProgressLoadWidget name='address' text='saving' />
+
+      }
+      else if (field==='basicInfo')
+      {
+        <ProgressLoadWidget name='basic info' text='saving'/>
+
+      }
+      else if(field==='password')
+      {
+        <ProgressLoadWidget name='password' text='saving'/>
+
+      }
+      </>
+     
+
+    )
+  }
 
   return (
     <Formik
@@ -357,7 +422,7 @@ const Form = () => {
         <form onSubmit={handleSubmit}>
         {field === "basicInfo" && (
             <Box sx={{display:'flex',flexDirection:'column',gap:2}}>
-                  <Typography variant='h3'color='primary'>Edit Basic Info</Typography>
+                  <Typography variant={isNonMobile?'h3':'h4'} color='primary'>Edit Basic Info</Typography>
               
               <TextField
                 name="email"
@@ -368,6 +433,33 @@ const Form = () => {
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
               />
+  <Dropzone
+  acceptedFiles=".jpg,.jpeg,.png"
+  multiple={false}
+  onDrop={(acceptedFiles) =>
+    setFieldValue("picture", acceptedFiles[0]?.name || "") // Set picture to file name
+  }
+>
+  {({ getRootProps, getInputProps }) => (
+    <Box
+      {...getRootProps()}
+      border={`2px dashed ${palette.primary.main}`}
+      p="1rem"
+      sx={{ gridColumn: "span 4", "&:hover": { cursor: "pointer" } }}
+    >
+      <input {...getInputProps()} />
+      {!values.picture ? (
+        <p>Add Picture Here</p>
+      ) : (
+        <FlexBetween>
+          <Typography>{values.picture}</Typography>
+          <EditOutlinedIcon />
+        </FlexBetween>
+      )}
+    </Box>
+  )}
+</Dropzone>
+
               {role==='user'&&(
                 <TextField
                 name="phoneNumber"
@@ -384,7 +476,7 @@ const Form = () => {
           )}
           {field === "address" && (
             <Box sx={{display:'flex',flexDirection:'column',gap:2}}>
-            <Typography variant='h3'>Edit Address</Typography>
+            <Typography variant={isNonMobile?'h3':'h4'} color='primary'>Edit Address</Typography>
               <TextField
                 name="streetAddress"
                 label="Street Address"
@@ -434,7 +526,7 @@ const Form = () => {
           )}
            {field === "payment" && (
             <Box sx={{display:'flex',flexDirection:'column',gap:2}}>
-                  <Typography variant='h3'>Edit Payment Info</Typography>
+                  <Typography variant={isNonMobile?'h3':'h4'} color='primary'>Edit Payment Info</Typography>
                   <TextField
                 name="cardNumber"
                 label="Card Number"
@@ -475,7 +567,7 @@ const Form = () => {
           )}
          {field === "password" && (
   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-    <Typography variant='h3'>Edit Password</Typography>
+    <Typography variant={isNonMobile?'h3':'h4'} color='primary'>Edit Password</Typography>
     <TextField
       type="password"
       name="password"
@@ -498,7 +590,9 @@ const Form = () => {
     />
   </Box>
 )}
-          <Button type="submit">Update</Button>
+<Box sx={{py:2}}>
+<Button type="submit" variant="contained" sx={{color:alt}}>Update</Button>
+</Box>
         </form>
       )}
     </Formik>

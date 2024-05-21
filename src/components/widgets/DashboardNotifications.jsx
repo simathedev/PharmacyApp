@@ -52,11 +52,11 @@ const DashboardNotifications = () => {
       alignItems="center"
       textAlign="center"
       width={isNonMobile ? "65%" : "78%"}
-      zIndex="1000"
+      zIndex="9"
       marginBottom={isLargeScreen ? "1rem" : isMediumScreen ? "2rem" : "2rem"}
     >
       <Box gap={2} justifyContent="center" alignItems="center" sx={{ width: isNonMobile ? "80%" : "100%" }}>
-        <Typography variant="h3" sx={{ my: 1 }}>
+        <Typography variant={isNonMobile?"h3":"h4"} sx={{ my: 1 }}>
           Dashboard Notifications
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "column" }}>

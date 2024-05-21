@@ -95,22 +95,28 @@ const ScriptNotification = () => {
     }
   }
   if (loading) {
-    return <Typography>Loading...</Typography>; // Display loading indicator while fetching data
+    return <Typography>Loading...</Typography>; 
   }
 
   if (scripts.length === 0) {
-    return <Typography>No orders found.</Typography>; // Display message when no orders are found
+    return <Typography fontStyle='italic'>No scripts found.</Typography>;
   }
 
+  {/**
+  tree of money(crooked,scary,surrounded and praised,woman raising her child toward that tree,each figure is sacrificing)
+  tree of love/life/lessons/books(left untouch, few figures surrounding it, they're happy, they're hugging supportive,trive is vibrant)
+*/}
 
   return (
     <Box sx={{ borderRadius: '2%', padding: '2px 4px' }}>
-      <Typography>Script Notification</Typography>
+     {/*<Typography>Script Notification</Typography>*/} 
       {scripts?.slice(0,2).map((script) => (
         <Card key={script._id} sx={{ backgroundColor:alt,my: 2, px: isNonMobile ? 4 : 5, py: 1, textAlign: 'left' }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
+              <Link to={`/view/prescription/${script._id}`} style={{textDecoration:'none'}}>
               <Typography variant='body1' fontWeight='500' color='primary' sx={{ py: 1 }}>Prescription ID: {script._id}</Typography>
+              </Link>
               <Typography variant='body1' sx={{ pb: 0.4 }}>Customer: {script.user?.firstName} {script.user?.lastName}</Typography>
             <Typography variant='body1' fontWeight='bold'> Medication: </Typography>
               {script.medications && script.medications.map((medication) => (
@@ -123,7 +129,7 @@ const ScriptNotification = () => {
           </Grid>
         </Card>
       ))}
-      <Link to='/manage/prescriptions'>
+      <Link to={`/manage/prescriptions?approved=${encodeURIComponent('false')}`} style={{ textDecoration: 'none' }}>
       <Button>View More</Button>
       </Link>
     </Box>

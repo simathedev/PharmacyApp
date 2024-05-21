@@ -2,6 +2,8 @@ import {Box,Typography,useTheme,useMediaQuery} from "@mui/material";
 import Form from './form';
 import { BiSolidCircleHalf } from "react-icons/bi";
 import { FaPills } from "react-icons/fa";
+import BackButton from "components/buttons/BackButton";
+import { Link } from "react-router-dom";
 
 const LoginPage=()=>{
     const theme=useTheme();
@@ -40,6 +42,11 @@ const LoginPage=()=>{
      display='flex' flexDirection='column'
     alignItems='center' justifyContent='center'
     >
+        <Box sx={{ml:3}}>
+        <Link to='/home' >
+        <BackButton/>
+        </Link>
+      </Box>
     <Box
    width={isLargeScreen ? "70%" : isMediumScreen ? "65%" : "85%"}
     p="2rem"

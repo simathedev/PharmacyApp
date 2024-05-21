@@ -42,7 +42,7 @@ const LoginPage=()=>{
      alignItems='center' justifyContent='center'
     >
         <Box sx={{ml:3}}>
-        <Link to='/' >
+        <Link to='/home' >
         <BackButton/>
         </Link>
       </Box>

@@ -12,6 +12,8 @@ import { FaUserCircle } from "react-icons/fa";
 import Navbar from "components/navbar";
 import SearchWidget from "components/widgets/Search";
 import { ContactSupportOutlined } from "@mui/icons-material";
+import NoDataFound from "components/widgets/NoDataFound";
+import Loading from "components/Loading";
 
 const Index = () => {
   const token = useSelector((state) => state.auth.token);
@@ -20,7 +22,8 @@ const Index = () => {
   const [users, setUsers] = useState([]);
   const [sortBy, setSortBy] = useState('nameAsc');
   const [deleteItemId,setDeleteItemId]=useState(null)
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
+  const [isLoading,setIsLoading]=useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isPermitted = role === 'admin' || role === 'pharmacist';
@@ -34,7 +37,7 @@ const Index = () => {
   const primary=theme.palette.primary.main;
 
   const fetchUsers = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await fetch("http://localhost:3001/user/getUsers", {
         method: "GET",
@@ -54,7 +57,7 @@ const Index = () => {
       console.error("Error fetching users:", error);
     }
     finally {
-      setLoading(false); // Set loading to false when data fetching is completed
+      setIsLoading(false); // Set loading to false when data fetching is completed
     }
   };
   useEffect(() => {
@@ -112,18 +115,17 @@ const Index = () => {
      
     }
 
+if(isLoading)
+{
+  return <Loading/>
+}
+
   return (
     <>
     {isPermitted?(
 <>
-{loading?(
- <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
- <CircularProgress />
- <Typography variant='h4' color='primary' sx={{px:2}}>Loading...</Typography>
-</Box>
-    ):(
     <Box sx={{textAlign:'center'}}>
-      <Typography variant={isNonMobile?'h1':'h2'}  sx={{mt:5}}>Manage Users</Typography>
+      <Typography variant={isNonMobile?'h1':'h3'}  sx={{mt:5}}>Manage Users</Typography>
       <SearchWidget searchQuery={searchQuery} setSearchQuery={setSearchQuery} isNonMobile={isNonMobile}/>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
       {
@@ -157,22 +159,25 @@ const Index = () => {
         </FormControl>
       </Card>
       <Box>
+    
       {users.length === 0 && (
-          <Typography variant="h4">No Users found...</Typography>
+          <NoDataFound name='Users' icon='FaUser'/>
         )}
       {sortedUsers.map((user) => (
-        <Card key={user._id} sx={{background:alt,my:3,pl:isNonMobile?4:5,py:5,textAlign:'left'}}>
+        <Card key={user._id} sx={{background:alt,my:3,pl:isNonMobile?4:5,py:isNonMobile?5:3,textAlign:'left'}}>
           <Grid container spacing={1}>
           <Grid item xs={6}>
           <FaUserCircle fontSize='5rem' color='lightBlue'/>
-          <Typography variant='h3' fontWeight='500' color='primary' sx={{py:2}}>{user.firstName} {user.lastName}</Typography>
+          <Link to={`/view/user/${user._id}`} style={{textDecoration:"none"}}>
+          <Typography variant={isNonMobile?'h3':'h4'} fontWeight='500' color='primary' sx={{py:2}}>{user.firstName} {user.lastName}</Typography>
+          </Link>
           <Typography variant='body1' sx={{py:0.4}} >Email Address: {user.email}</Typography >
           <Typography variant='body1' sx={{py:0.4}} >ID number: {user.IDNumber}</Typography >
           <Typography variant='body1' sx={{py:0.4}}>Phone number: {user.phoneNumber}</Typography>
           <Typography variant='body1' sx={{py:0.4}}>Address: {user.streetAddress}</Typography>
           </Grid>
        
-          <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:2}}>
+          <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:isNonMobile?2:1}}>
          <Link to={`/Edit/User/${user._id}`}>
          <EditButton/>
          </Link>
@@ -190,7 +195,6 @@ const Index = () => {
     />
     </Box>
     </Box>
-    )}
 </>
     ):(
       <>

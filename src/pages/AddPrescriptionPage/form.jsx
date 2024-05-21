@@ -11,12 +11,16 @@ import {
   Checkbox,
   useMediaQuery,
   useTheme,
+  Card
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import Loading from 'components/Loading';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
 
 const Form = () => {
+
   const navigate = useNavigate();
   const prescriptionSchema = yup.object().shape({
     user: yup.string().required('User is required'),
@@ -42,6 +46,8 @@ const Form = () => {
   const [users, setUsers] = useState([]);
   const [medications, setMedications] = useState([]);
   const [pharmacies, setPharmacies] = useState([]);
+  const [isLoading,setIsLoading]=useState(true);
+  const [isSaving,setIsSaving]=useState(false);
   const token = useSelector((state) => state.auth.token);
   const [selectedPharmacyId, setSelectedPharmacyId] = useState('');
   const selectedPharmacy=useSelector((state)=>state.auth.pharmacy);
@@ -130,6 +136,7 @@ const Form = () => {
     };
   
     fetchMedications();
+    setIsLoading(false);
   }, [token, role, selectedPharmacy,selectedPharmacyId])
 
   const prescription = async (values, onSubmitProps) => {
@@ -143,6 +150,7 @@ const Form = () => {
         body: JSON.stringify(values),
       });
       if (prescriptionResponse.ok) {
+        setIsSaving(false);
         onSubmitProps.resetForm();
         if(role==='pharmacist'||role==='admin')
         {
@@ -164,7 +172,8 @@ const Form = () => {
           theme:"colored",
         });
       } else {
-        
+        setIsSaving(false);
+        //setIsLoading(false);
         console.log('Failed to submit the prescription form');
         toast.error('Prescription Creation Unsuccessful', {
           position: "top-right",
@@ -178,6 +187,7 @@ const Form = () => {
           });
       }
     } catch (error) {
+      setIsSaving(false);
       console.error('Error in prescription function:', error);
       toast.error('Prescription Creation Unsuccessful', {
         position: "top-right",
@@ -195,7 +205,7 @@ const Form = () => {
   const handleSubmit = async (values, onSubmitProps) => {
     try {
       //console.log('add prescriptions page:',values);
-
+      setIsSaving(true);
       if(role==='pharmacist')
       {
         const approved = !!values.approved
@@ -222,6 +232,20 @@ const Form = () => {
       console.error('Error submitting form:', error);
     }
   };
+  const capitalize = (value) => {
+    //if (!value) return value;
+   // return value.charAt(0).toUpperCase() + value.slice(1);
+   if (!value) return value;
+    return value
+      .split(' ') // Split the sentence into words
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+      .join(' '); // Join the words back into a sentence
+  };
+
+  if(isLoading)
+  {
+    return <Loading/>
+  }
 
   return (
     <Formik
@@ -242,11 +266,27 @@ const Form = () => {
           <Box 
           display="grid"
           gap="30px"
+          position="relative"
           gridTemplateColumns="repeat(4, minmax(0, 1fr))"
           sx={{
             "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
           }}
           >
+
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Prescription' text='Adding'/>
+
+        </Card>
+        )}
             {role==='admin'&&
             (
               <Autocomplete
@@ -336,7 +376,11 @@ const Form = () => {
                 name="doctor"
                 value={values.doctor}
                 onChange={handleChange}
-                onBlur={handleBlur}
+                onBlur={ (e)=>  
+                  {const capitalizedValue = capitalize(e.target.value); // Capitalize the input value
+                 setFieldValue('doctor', capitalizedValue); // Set the field value with the capitalized value
+                 handleBlur(e);
+                  }}
                 error={touched.doctor && Boolean(errors.doctor)}
                 helperText={touched.doctor && errors.doctor}
                 margin="normal"

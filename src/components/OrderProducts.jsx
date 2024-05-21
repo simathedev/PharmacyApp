@@ -20,11 +20,11 @@ const OrderProducts = ({ medications }) => {
             height={isNonMobile ? "70px" : "50px"}
             alt="medication"
             style={{ borderRadius: '10%' }}
-            src={`http://localhost:3001/assets/${medication.medication.picture}`}
+            src={`http://localhost:3001/assets/${medication.medication?.picture}`}
           />
           <Box sx={{width:isNonMobile?'75%':'80%'}}>
           <Typography variant='body1' sx={{ fontSize: '12px' }}>
-            {medication.medication.name}
+            {medication.medication?.name}
           </Typography>
           </Box>
         </Box>

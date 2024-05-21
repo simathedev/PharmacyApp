@@ -13,12 +13,13 @@ import {
     Alert,
     AlertTitle,
     useTheme,
+    Card,
   } from "@mui/material";
   import { useDispatch,useSelector } from "react-redux";
   import { useNavigate } from "react-router-dom";
   import { toast } from 'react-toastify';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
 
- 
   
   const Form = () => {
     const navigate = useNavigate();
@@ -66,6 +67,9 @@ import {
 
     const { palette } = useTheme();
     const isNonMobile = useMediaQuery("(min-width:600px)");
+   const [isLoading,setIsLoading]=useState(true);
+   const[isSaving,setIsSaving]=useState(false);
+   
     const user=async(values,onSubmitProps)=>{
       try {
       const userResponse=await fetch(
@@ -80,6 +84,7 @@ import {
         }
       )
       if(userResponse.ok){
+        setIsSaving(false)
           onSubmitProps.resetForm();
           navigate("/manage/users");
           toast.success('User Successfully Created.', { 
@@ -90,10 +95,11 @@ import {
             pauseOnHover: true, // Whether hovering over the notification pauses the autoClose timer
             draggable: true, // Whether the notification can be dragged
             progress: undefined, // Custom progress bar (can be a React element)
-            // Other options for customizing the notification
+            theme:"colored",
           });
       }
       else{
+        setIsSaving(false)
           console.log("failed to submit the user form");
           toast.error('User Creation Unsuccessful', {
             position: "top-right",
@@ -103,12 +109,13 @@ import {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
       }
 
         } 
         catch (error) {
+          setIsSaving(false)
           console.error("Error in user function:", error);
           toast.error('User Creation Unsuccessful', {
             position: "top-right",
@@ -118,7 +125,7 @@ import {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
         }
     
@@ -148,7 +155,7 @@ import {
             pauseOnHover: true, // Whether hovering over the notification pauses the autoClose timer
             draggable: true, // Whether the notification can be dragged
             progress: undefined, // Custom progress bar (can be a React element)
-            // Other options for customizing the notification
+            theme:"colored",
           });
       }
       else{
@@ -161,7 +168,7 @@ import {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
       }
 
@@ -176,7 +183,7 @@ import {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
         }
     
@@ -185,6 +192,7 @@ import {
     const handleSubmit = async (values, onSubmitProps) => {
       try {
         const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
+        setIsSaving(true);
         if(Admin)
         {
           await createAdmin(values,onSubmitProps);
@@ -202,6 +210,8 @@ import {
         console.error('Error submitting form:', error);
       }
     };
+
+   
   
     return (
       <Formik
@@ -221,11 +231,27 @@ import {
             <Box 
             display="grid"
             gap="30px"
+            position= "relative"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
             >
+        {isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='user' text='creating'/>
+
+        </Card>
+        )}
+  
               {role=='admin'&&(
  <Button 
  sx={{gridColumn:"span 4"}}

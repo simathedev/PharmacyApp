@@ -15,20 +15,32 @@ import { BiSolidAmbulance } from "react-icons/bi";
 const Index = () => {
 const theme=useTheme();
 const {palette}=useTheme();
+const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const background = theme.palette.background.default;
+  const primaryLight = theme.palette.primary.light;
+  const alt = theme.palette.background.alt;
+  const primary=theme.palette.primary.main;
 const role=useSelector((state)=>state.auth.role);
+
+const isNonMobile = useMediaQuery("(min-width:600px)");
+const isLargeScreen= useMediaQuery("(min-width:900px)");
+const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
+   
+
   return (
-   <Box sx={{minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:1}}>
-<BiSolidAmbulance fontSize='3rem' style={{ color: theme.palette.primary.main }} />
-<Typography variant='h1'fontSize='5rem' color='primary' fontWeight='bold'>
+   <Box sx={{minHeight:'100vh',display:'flex',flexDirection:'column',alignItems:'center',mt:25,gap:1}}>
+<BiSolidAmbulance fontSize={isNonMobile?'3rem':'2rem'} style={{ color: theme.palette.primary.main }} />
+<Typography variant='h1'fontSize={isNonMobile?'5rem':'2rem'} color='primary' fontWeight='bold'>
     Error 404
 </Typography>
-<Typography variant='h4' fontSize='2rem' color='primary'>
+<Typography variant='h4' fontSize={isNonMobile?'2rem':'1rem'} color='primary'>
   Page Not Found.
 </Typography>
 {role==='admin'?(
 <>
 <Link to='admin'>
-<Button>Return To Homepage</Button>
+<Button sx={{fontSize:!isNonMobile&&'0.6rem'}} >Return To Homepage</Button>
 </Link>
 </>
 ):role==='pharmacist'?(

@@ -14,11 +14,13 @@ import {
   Checkbox,
   useTheme,
   useMediaQuery,
+  Card
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate,useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
-
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
+import Loading from 'components/Loading';
 
 
 const Form = () => {
@@ -44,6 +46,8 @@ const Form = () => {
 
   const [pharmacist, setPharmacist] = useState({});
   const [pharmacies, setPharmacies] = useState([]);
+  const [isLoading,setIsLoading]=useState(true);
+  const [isSaving,setIsSaving]=useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [validationSchema, setValidationSchema] = useState(yup.object());
   const [showPharmacistInfoFields, setShowPharmacistInfoFields] = useState(false);
@@ -108,6 +112,7 @@ const Form = () => {
         body: JSON.stringify(values),
       });
       if (pharmacistResponse.ok) {
+        setIsSaving(false);
         onSubmitProps.resetForm();
         navigate("/admin/pharmacists");
         toast.success('Pharmacist Successfully Updated.', { 
@@ -120,6 +125,7 @@ const Form = () => {
           theme:"colored",
         });
       } else {
+        setIsSaving(false)
         console.log('Failed to submit the pharmacist form');
         toast.error('Pharmacist Update Unsuccessful', {
           position: "top-right",
@@ -133,6 +139,7 @@ const Form = () => {
           });
       }
     } catch (error) {
+      setIsSaving(false)
       console.error('Error in pharmacist function:', error);
       toast.error('Pharmacist Update Unsuccessful', {
         position: "top-right",
@@ -190,6 +197,7 @@ const Form = () => {
           setValidationSchema(yup.object());
       }
     }
+    setIsLoading(false)
   }
 
 
@@ -227,13 +235,18 @@ const handlePasswordClick = () => {
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
-      
+      setIsSaving(true);
       console.log('Submitting pharmacist:', values);
       await updatePharmacist(values, onSubmitProps);
     } catch (error) {
       console.error('Error submitting form:', error);
     }
   };
+
+if(isLoading)
+{
+  return <Loading/>
+}
 
   return (
     
@@ -256,12 +269,29 @@ const handlePasswordClick = () => {
               <Box 
               display="grid"
               gap="30px"
+              position="relative"
               gridTemplateColumns="repeat(4, minmax(0, 1fr))"
               sx={{
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
               >
-                  <Button 
+
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Pharmacist' text='Updating'/>
+
+        </Card>
+        )}
+
+                  {/*<Button 
               onClick={handlePharmacistClick}
               sx={{ gridColumn: "span 4" }}
             >
@@ -281,6 +311,28 @@ const handlePasswordClick = () => {
             >
               {showPasswordFields ? "Hide Password" : "Edit Password"}
             </Button>
+
+           */}
+ <Button
+        onClick={handlePharmacistClick}
+        sx={{ display: showPharmacyFields || showPasswordFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showPharmacistInfoFields ? 'Hide Pharmacist Info' : 'Edit Pharmacist Info'}
+      </Button>
+      <Button
+        onClick={handlePharmacyClick}
+        sx={{ display: showPharmacistInfoFields || showPasswordFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showPharmacyFields ? 'Hide Pharmacy' : 'Edit Pharmacy'}
+      </Button>
+
+      <Button
+        onClick={handlePasswordClick}
+        sx={{ display: showPharmacistInfoFields || showPharmacyFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showPasswordFields ? 'Hide Password' : 'Edit Password'}
+      </Button>
+
             {showPharmacistInfoFields&&(
               <>
  <TextField

@@ -10,7 +10,7 @@ import {
     useTheme,
     useMediaQuery,
     Card,
-    Grid
+    Grida
   } from "@mui/material";
 
 const CartPopup = ({ count }) => {

@@ -10,7 +10,8 @@ import {
   FormControlLabel,
   Checkbox,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Card
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -19,6 +20,8 @@ import Dropzone from 'react-dropzone';
 import FlexBetween from "components/FlexBetween";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { useParams } from 'react-router-dom';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
+import Loading from 'components/Loading';
 
 const Form = () => {
   const { palette } = useTheme();
@@ -49,6 +52,8 @@ const Form = () => {
   const [users, setUsers] = useState([]);
   const [medications, setMedications] = useState([]);
   const [pharmacy, setPharmacy] = useState([]);
+  const [isLoading,setIsLoading]=useState(true);
+  const [isSaving,setIsSaving]=useState(false);
   const token = useSelector((state) => state.auth.token);
   const role=useSelector((state)=>state.auth.role);
   const [showPharmacyInfoFields, setShowPharmacyInfoFields] = useState(false);
@@ -100,6 +105,7 @@ const Form = () => {
       
       const fetchPharmacy = async () => {
         try {
+          setIsLoading(true);
           const response = await fetch(`http://localhost:3001/pharmacy/getPharmacy/${id}`, {
             method: 'GET',
             headers: {
@@ -198,6 +204,7 @@ setInitialValues({
         setValidationSchema(yup.object());
     }
   }
+  setIsLoading(false);
 }
 
   useEffect(() => {
@@ -206,6 +213,7 @@ setInitialValues({
 
   const updatePharmacy = async (values, onSubmitProps) => {
     try {
+      setIsSaving(true)
       const pharmacyResponse = await fetch(`http://localhost:3001/pharmacy/updatePharmacy/${id}`, {
         method: 'PUT',
         headers: {
@@ -215,6 +223,7 @@ setInitialValues({
         body: JSON.stringify(values),
       });
       if (pharmacyResponse.ok) {
+        setIsSaving(false);
         onSubmitProps.resetForm();
         navigate("/admin/pharmacies");
         toast.success('Pharmacy Successfully Updated.', { 
@@ -230,6 +239,7 @@ setInitialValues({
         });
 
       } else {
+        setIsSaving(false)
         console.log('Failed to submit the pharmacy form');
         toast.error('Pharmacy Update Unsuccessful', {
           position: "top-right",
@@ -243,6 +253,7 @@ setInitialValues({
           });
       }
     } catch (error) {
+      setIsSaving(false)
       console.error('Error in prescription function:', error);
       toast.error('Pharmacy Update Unsuccessful', {
         position: "top-right",
@@ -259,6 +270,7 @@ setInitialValues({
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
+      setIsSaving(true)
       console.log('updating pharmacy:', values);
       if(showAddressFields)
       {
@@ -303,7 +315,10 @@ const handleTimeClick = () => {
     setShowPharmacyInfoFields(false);
     setShowAddressFields(false);
 };
-
+if(isLoading)
+{
+  return <Loading/>
+}
   return (
     <Formik
         initialValues={initialValues}
@@ -324,12 +339,28 @@ const handleTimeClick = () => {
             <Box 
             display="grid"
             gap="30px"
+            position="relative"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}
             >
-  <Button 
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Pharmacy' text='Updating'/>
+
+        </Card>
+        )}
+
+{/*<Button 
               onClick={handlePharmacyClick}
               sx={{ gridColumn: "span 4" }}
             >
@@ -348,7 +379,29 @@ const handleTimeClick = () => {
               sx={{ gridColumn: "span 4" }}
             >
               {showTimeFields ? "Hide Time" : "Edit Time"}
-            </Button>
+            </Button> */}
+
+            <Button
+        onClick={handlePharmacyClick}
+        sx={{ display: showAddressFields || showTimeFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showPharmacyInfoFields ? 'Hide Pharmacy Info' : 'Edit Pharmacy Info'}
+      </Button>
+
+      <Button
+        onClick={handleAddressClick}
+        sx={{ display: showPharmacyInfoFields || showTimeFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showAddressFields ? 'Hide Address' : 'Edit Address'}
+      </Button>
+
+      <Button
+        onClick={handleTimeClick}
+        sx={{ display: showPharmacyInfoFields || showAddressFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showTimeFields ? 'Hide Time' : 'Edit Time'}
+      </Button>
+
             {showPharmacyInfoFields&&(
               <>
               <TextField

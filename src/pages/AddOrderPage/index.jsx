@@ -9,7 +9,7 @@ const Index = () => {
   const theme=useTheme();
   const isNonMobileScreens= useMediaQuery("(min-width:600px)");
   return (
-    <Box>
+    <Box sx={{minHeight:'100vh'}}>
       
       <Box sx={{ml:3}}>
         <Link to='/manage/orders' >
@@ -27,6 +27,7 @@ const Index = () => {
     p="2rem"
     m="2rem auto"
     borderRadius="1.5rem"
+   
     backgroundColor={theme.palette.background.alt}
     >
         <Form/>

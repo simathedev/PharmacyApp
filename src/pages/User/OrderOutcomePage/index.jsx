@@ -1,35 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Grid, Card, Box,useMediaQuery, Typography, Button, useTheme, CircularProgress} from '@mui/material';
-import EditButton from "components/buttons/EditButton";
-import DeleteButton from "components/buttons/DeleteButton";
-import AddButton from "components/buttons/AddButton";
-import BackButton from "components/buttons/BackButton";
-import OrderProducts from "components/OrderProducts";
+import { Box, Typography, CircularProgress,useTheme, useMediaQuery, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
-import OrderStatus from "components/widgets/OrderStatus";
+import { AiOutlineCheckCircle } from 'react-icons/ai'; // Import check circle icon
+import { MdLocalShipping, MdStore } from 'react-icons/md'; // Import shipping and store icons
+import BackButton from "components/buttons/BackButton";
 import Navbar from "components/navbar";
-import ViewButton from "components/buttons/ViewButton";
-import FilterOption from "components/widgets/FilterOption";
+import Loading from "components/Loading";
 
 const Index = () => {
   const token = useSelector((state) => state.auth.token);
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const user = useSelector((state) => state.auth.user);
-  let userId;
-  userId=user._id;
-  const isNonMobile = useMediaQuery("(min-width:600px)");
-  const isLargeScreen= useMediaQuery("(min-width:900px)");
-  const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
- 
+  const [order, setOrder] = useState({});
+  const [loading, setLoading] = useState(false);
+  const orderID = localStorage.getItem('newOrderId');
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const background = theme.palette.background.default;
+  const primaryLight = theme.palette.primary.light;
+  const alt = theme.palette.background.alt;
+  const primary=theme.palette.primary.main;
 
+const isNonMobile = useMediaQuery("(min-width:600px)");
+const isLargeScreen= useMediaQuery("(min-width:900px)");
+const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
+   
 
-  useEffect(() => {
+ /* useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/order/getUserOrders/${userId}`, {
+        const response = await fetch(`http://localhost:3001/order/getorder/${orderID}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -38,76 +39,52 @@ const Index = () => {
         });
         if (response.ok) {
           const ordersData = await response.json();
-          console.log("orders data:",ordersData);
-          setOrders(ordersData);
+          setOrder(ordersData);
         } else {
-          console.log("Failed to fetch orders");
+          console.log("Failed to fetch order");
         }
       } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-      finally {
+        console.error("Error fetching order:", error);
+      } finally {
         setLoading(false); // Set loading to false when data fetching is completed
       }
     };
 
     fetchOrders();
-  }, [token]);
-
+  }, [orderID, token]);*/
+if(loading){
+return <Loading/>
+}
   return (
-    <Box sx={{minHeight:'100vh'}}>
- {loading?(
- <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
- <CircularProgress />
- <Typography variant='h4' color='primary' sx={{px:2}}>Loading...</Typography>
-</Box>
-    ):(
-    <Box sx={{textAlign:'center'}}>
-    <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2}}>
-      <Link to={'/User'}>
-          <BackButton />
-        </Link>
-      </Box>
-       
-      <Typography variant='h3'>Order </Typography>
-      {orders.length === 0 && (
-          <Typography variant="h4">No Order found...</Typography>
-        )}
-        <Box sx={{display:'flex',alignItems:'center',justifyContent:'center'}}>
-        <Box sx={{width:isLargeScreen?'70%':isMediumScreen?'80%':'90%'}}>
-      {orders?.map((orders) => (
-        <Card key={orders._id} sx={{my:2,px:4,py:6,textAlign:'left'}}>
-          <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Box sx={{display:'flex',flexDirection:'column',justifyContent:'space-between',pb:1}}>
-          <Typography variant={isNonMobile?'h5':'h6'} width='40%' color='primary' sx={{fontWeight:'bold'}}>Order ID: {orders._id}</Typography>
-            <Box sx={{display:'flex',textAlign:'left',width:'40%',flexDirection:'column'}}>
-            <Typography variant='body1' sx={{fontWeight:'bold'}}>{orders.createdAt}</Typography> 
+    <Box sx={{ minHeight: '100vh' }}>
+        <Box sx={{ textAlign: 'center', padding: '20px' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'left', paddingLeft: '20px' }}>
+            <Link to={'/User'}>
+              <BackButton />
+            </Link>
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>             
+          <Typography variant={isNonMobile?'h2':'h4'} sx={{  marginBottom: '20px',fontWeight: 'bold', paddingTop: '20px', paddingBottom: '10px', color: 'primary.main' }}>Order Successfully Created!</Typography>
+
+            <Box sx={{ width: isNonMobile?'70%':'85%', marginBottom: '20px' }}>
+              {/*<Typography variant='h3' sx={{ fontWeight: 'bold', paddingTop: '20px', paddingBottom: '10px', color: 'primary.main' }}>Order Successfully Created!</Typography>*/}
+              <Typography variant='h5' sx={{ paddingBottom: '10px' }}>ORD{orderID}</Typography>
+              <Box sx={{ backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px' }}>
+                <Typography variant= {isNonMobile?'h5':'body1'} sx={{ paddingBottom: '10px', textAlign: 'center' }}>
+                  <AiOutlineCheckCircle style={{ fontSize:isNonMobile?'40px':'36px', color: '#4caf50', marginBottom: '10px' }} /><br />
+                  Thank you for placing your order with us. Your order is currently in <b>{order?.orderStatus}</b>. We have noted that you have opted for
+                  <span style={{ fontWeight: 'bold', color: primary }}> {order?.deliveryType}</span> 
+                  for this delivery.
+                  The items will be sourced from <span style={{ fontWeight: 'bold', color: primary }}> {order.pharmacy?.name}</span>.
+                  We will keep you updated on the progress of your order. If you have any questions or need further assistance,
+                  please feel free to reach out to our customer support team. We appreciate your business and look forward to serving you.
+                </Typography>
+              </Box>
             </Box>
           </Box>
-          <Typography variant='body1'>{orders.orderStatus} </Typography>
-          <OrderProducts medications={orders.medications} />
-          </Grid>
-       
-          <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:2}}>
-          <Link to={`/user/view/order/${orders._id}`}>
-         <ViewButton/>
-         </Link>
-          </Grid>
-          </Grid>
-        </Card>
-      ))}
-      </Box>
-   
         </Box>
-     
-     
-
-      {/*<OrderStatus/>*/}
     </Box>
-    )}
-    </Box>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

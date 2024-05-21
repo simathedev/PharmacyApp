@@ -17,11 +17,14 @@ import {
     AlertTitle,
     useTheme,
     MenuItem,
+    Card
   } from "@mui/material";
   import { useDispatch,useSelector } from "react-redux";
 import BackButton from 'components/buttons/BackButton';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
+import Loading from 'components/Loading';
 
  
   
@@ -31,6 +34,8 @@ import { toast } from 'react-toastify';
     const role= useSelector((state) => state.auth.role);
     const [image, setImage] = useState(null);
     const [pharmacies, setPharmacies] = useState([]);
+    const [isLoading,setIsLoading]=useState(true);
+    const [isSaving,setIsSaving]=useState(false);
     const { palette } = useTheme();
     const medicationSchema = yup.object().shape({
       name: yup.string().required('medication name is required'),
@@ -64,12 +69,15 @@ import { toast } from 'react-toastify';
             },
           });
           if (response.ok) {
+            setIsLoading(false);
             const pharmaciesData = await response.json();
             setPharmacies(pharmaciesData);
           } else {
+            setIsLoading(false);
             console.log('Failed to fetch pharmacies');
           }
         } catch (error) {
+          setIsLoading(false);
           console.error('Error fetching pharmacies:', error);
         }
       };
@@ -95,6 +103,7 @@ import { toast } from 'react-toastify';
         }
       )
       if(medicationResponse.ok){
+        setIsSaving(false);
           onSubmitProps.resetForm();
           navigate("/manage/medications");
           toast.success('Medication Successfully Created.', { 
@@ -105,11 +114,12 @@ import { toast } from 'react-toastify';
             pauseOnHover: true, // Whether hovering over the notification pauses the autoClose timer
             draggable: true, // Whether the notification can be dragged
             progress: undefined, // Custom progress bar (can be a React element)
-            // Other options for customizing the notification
+            theme:"colored",
           });
       }
       //if (goalData)
       else{
+        setIsSaving(false);
           console.log("failed to submit the medication form");
           toast.error('Medication Creation Unsuccessful', {
             position: "top-right",
@@ -119,13 +129,14 @@ import { toast } from 'react-toastify';
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
       }
 
           // ...rest of the code
         } 
         catch (error) {
+          setIsSaving(false);
           console.error("Error in medication function:", error);
           toast.error('Medication Creation Unsuccessful', {
             position: "top-right",
@@ -135,7 +146,7 @@ import { toast } from 'react-toastify';
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
         }
     
@@ -144,6 +155,7 @@ import { toast } from 'react-toastify';
     const handleSubmit = async (values, onSubmitProps) => {
       try {
         // Perform the submission logic here
+        setIsSaving(true);
         console.log('Submitting medication:', values);
         await medication(values, onSubmitProps);
         //resetForm(); // Reset the form after successful submission
@@ -151,6 +163,11 @@ import { toast } from 'react-toastify';
         console.error('Error submitting form:', error);
       }
     };
+
+    if(isLoading)
+    {
+      return <Loading/>
+    }
   
     return (
       <Formik
@@ -171,6 +188,7 @@ import { toast } from 'react-toastify';
             <Box 
             display="grid"
             gap="30px"
+            position="relative"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
@@ -178,7 +196,21 @@ import { toast } from 'react-toastify';
            // display="flex" flexDirection="column" alignItems="center"
             >
 
-            
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Medication' text='Adding'/>
+
+        </Card>
+        )}
+
               
               <TextField
               label="Medication Name"

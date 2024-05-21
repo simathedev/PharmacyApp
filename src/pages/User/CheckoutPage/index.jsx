@@ -50,6 +50,14 @@ const Index = () => {
   //console.log("count from state:",count)
   console.log("",)
 
+  /*const generateOrderNumber = () => {
+    const timestamp = Date.now().toString(); // Get current timestamp as string
+    const randomChars = generateRandomString(6); // Generate a random string of specific length
+    const orderNumber = `ord_${timestamp}_${randomChars}`;
+    console.log("order number: ",orderNumber);
+    return orderNumber;
+  };*/
+  
 
   const increaseItemQuantity = (item) => {
     dispatch(increaseQuantity(item));
@@ -183,7 +191,7 @@ const stepValues={
   const handleSubmit = async (values) => {
     try {
       let updatedValues;
-      
+      //const orderRef=generateOrderNumber();
 
      if(values.streetAddress){
       const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
@@ -241,8 +249,12 @@ const stepValues={
         body:JSON.stringify(formValues),
       });
     if(orderResponse.ok){
+      const responseData = await orderResponse.json(); // Parse response data
+     const newOrderId = responseData.data._id;
+     console.log ("orderID after creating order:",newOrderId);
+     localStorage.setItem('newOrderId', newOrderId);
       dispatch(clearCart());
-        navigate("/user");
+      navigate("/checkout/orderConfirmation");
         toast.success('Order Successfully Created.', { 
           // Position of the notification
           autoClose: 5000, // Duration before the notification automatically closes (in milliseconds)
@@ -254,6 +266,7 @@ const stepValues={
           theme:'colored', // Custom progress bar (can be a React element)
           // Other options for customizing the notification
         });
+
     }
     //if (goalData)
     else{
@@ -298,7 +311,7 @@ const stepValues={
        </Box> 
      <Box sx={{ display:'flex', flexDirection:'column', justifyContent:'center',alignItems:'center',my:2}}>
          
-           <Typography variant='h3' sx={{my:3}}>1. Confirm Order Details</Typography>
+           <Typography variant={isNonMobile?'h3':'h4'} sx={{my:3}}>1. Confirm Order Details</Typography>
            <Grid container spacing={2} sx={{mx:4,width:isNonMobile?'50%':'90%'}}>
  
            <Grid item xs={12} sm={12} md={12} lg={12} >
@@ -322,7 +335,7 @@ const stepValues={
              </Grid>
          </Grid>
          {/*when the button is selected it should set delivery type and also */}
-         <Typography variant='h3' sx={{my:3}}>2. Choose Delivery Option</Typography>
+         <Typography variant={isNonMobile?'h3':'h4'} sx={{my:3}}>2. Choose Delivery Option</Typography>
          <Box display="flex" width={isNonMobile?'50%':'90%'} alignItems='center' justifyContent='center' >
         
            <Button
@@ -344,7 +357,7 @@ const stepValues={
            onClick={() => handleDeliveryOption('delivery')}><FaTruck/> Delivery</Button>
          </Box>
  
-         <Typography variant='h3' sx={{my:3}}>3. Confirm Address Details</Typography>
+         <Typography variant={isNonMobile?'h3':'h4'} sx={{my:3}}>3. Confirm Address Details</Typography>
          {addressStep>=2&&(
           
            <>
@@ -353,7 +366,7 @@ const stepValues={
            deliveryType==='delivery'?
  (
   
- <Card sx={{ backgroundColor:alt,display: 'flex',width:isNonMobile?'50%':'80%', minHeight: '15vh', borderRadius:6, px: 4, py: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+ <Card sx={{ backgroundColor:alt,display: 'flex',width:isNonMobile?'50%':'90%', minHeight: '15vh', borderRadius:6, px:isNonMobile?4:3, py: 2, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, width: '100%' }}>
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', textAlign: 'left' }}>
         {/*<IoIosHome fontSize='1.5rem' />*/}
@@ -455,13 +468,13 @@ const stepValues={
            </>
          )}
 
-      <Typography variant='h3' sx={{my:3}}>4. Confirm Card Details</Typography>
+      <Typography variant={isNonMobile?'h3':'h4'} sx={{my:3}}>4. Confirm Card Details</Typography>
          {addressStep>=3&&(
           <>
             <CardWidget handleStepData={handleStepData} values={values} editing={editing} cardDetails={cardDetails} editingSection={editingSection} handleEditClick={handleEditClick} handleSubmit={handleSubmit} />
           {  addressStep>=4&&(
 
-          <Button variant='contained' sx={{my:2}} onClick={() => order(formValues)}>Create order</Button>
+          <Button variant='contained' sx={{my:2,color:alt}} onClick={() => order(formValues)}>Create order</Button>
           )}
       </>
       )}

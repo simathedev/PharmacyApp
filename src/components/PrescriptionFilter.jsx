@@ -1,14 +1,16 @@
+// PrescriptionFilter.js
+
 import React, { useState } from "react";
-import { Box, Typography, Button, Checkbox, FormGroup, FormControlLabel, TextField } from '@mui/material';
+import { Box, Typography, Button, useTheme, Checkbox, FormGroup, FormControlLabel, TextField } from '@mui/material';
 
 const PrescriptionFilter = ({ handleFilter }) => {
-  const [approved, setApproved] = useState(false);
+  const [approved, setApproved] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
   const handleApplyFilter = () => {
     const filter = {};
-    if (approved !== null) { // Check if approved is not null
+    if (approved !== null) {
       filter.approved = approved;
     }
     if (startDate && endDate) {
@@ -19,21 +21,33 @@ const PrescriptionFilter = ({ handleFilter }) => {
   };
 
   const handleClearFilter = () => {
-    // Reset state values
-    setApproved(null); // Change to null
+    setApproved(null);
     setStartDate('');
     setEndDate('');
-    // Clear the filter by passing an empty filter object
     handleFilter({});
   };
 
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const background = theme.palette.background.default;
+  const primaryLight = theme.palette.primary.light;
+  const alt = theme.palette.background.alt;
+  const primary=theme.palette.primary.main;
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent:'left', textAlign:'left', gap: 2 }}>
-      <Typography sx={{fontWeight:'bold'}} gutterBottom>Approved:</Typography>
-      <FormControlLabel
-        control={<Checkbox checked={approved} onChange={(e) => setApproved(e.target.checked)} />}
-        label="Approved"
-      />
+      <Typography sx={{fontWeight:'bold'}} gutterBottom>Approval Status:</Typography>
+      <FormGroup>
+        <FormControlLabel
+          control={<Checkbox checked={approved === true} onChange={(e) => setApproved(e.target.checked ? true : null)} />}
+          label="Approved"
+        />
+        <FormControlLabel
+          control={<Checkbox checked={approved === false} onChange={(e) => setApproved(e.target.checked ? false : null)} />}
+          label="Not Approved"
+        />
+      </FormGroup>
 
       <Typography sx={{fontWeight:'bold'}} gutterBottom>Date Range:</Typography>
       <Box sx={{ display: 'flex',flexDirection:'column', gap: 2 }}>
@@ -58,8 +72,8 @@ const PrescriptionFilter = ({ handleFilter }) => {
       </Box>
 
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button variant="contained" onClick={handleApplyFilter}>Apply Filter</Button>
-        <Button variant="contained" onClick={handleClearFilter}>Clear Filter</Button>
+        <Button variant="contained" sx={{color:alt}} onClick={handleApplyFilter}>Apply Filter</Button>
+        <Button variant="outlined" onClick={handleClearFilter}>Clear Filter</Button>
       </Box>
     </Box>
   );

@@ -14,10 +14,10 @@ const Index = () => {
   const isPermitted=role==='pharmacist'||role==='admin';
 
   return (
-    <Box>
+    <Box sx={{minHeight:'100vh'}}>
       
       <Box sx={{ml:3}}>
-        <Link to='/manage/orders' >
+        <Link to='/manage/medications' >
         <BackButton/>
         </Link>
       </Box>
@@ -30,13 +30,16 @@ const Index = () => {
    
       
      
-    
-      <Box
+
+    <Box
     width={isNonMobileScreens?"70%":"80%"}
     p="2rem"
     m="2rem auto"
     borderRadius="1.5rem"
+    display="flex"
+    flexDirection="column"
     backgroundColor={theme.palette.background.alt}
+    minHeight="50vh"
     >
         <Form/>
     </Box>

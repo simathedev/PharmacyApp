@@ -33,7 +33,7 @@ const Index = () => {
   const pharmacy=useSelector((state)=>state.auth.pharmacy);
 console.log("pharmacy from redux:",pharmacy);
   console.log("role: ",role)
-  const fullName = `${user.firstName} ${user.lastName}`;
+  const fullName = `${user?.firstName} ${user?.lastName}`;
   return (
     <Box sx={{minHeight:'100vh' }}>
       <CartNavbar/>
@@ -43,7 +43,7 @@ console.log("pharmacy from redux:",pharmacy);
       variant={isNonMobile?"h2":"h3"} fontWeight="500" 
       textAlign="center" mb={4} mt={isNonMobile?10:8}
       color={palette.primary.main}
-      >Welcome, {user?.firstName}</Typography>
+      >Welcome, {!user?'User':user?.firstName}</Typography>
       <NearbyPharmacy/>
       <Categories/>
       

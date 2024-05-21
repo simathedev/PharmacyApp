@@ -14,7 +14,9 @@ import {
   FormControl, 
   Select, 
   MenuItem,
-  CircularProgress
+  CircularProgress,
+  Autocomplete,
+
 } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useDispatch,useSelector } from "react-redux";
@@ -34,8 +36,17 @@ const Form = () => {
   const [ selectedPharmacyData,  setSelectedPharmacyData] = useState([]);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isPermitted=role==='pharmacist'||role==='admin';
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const background = theme.palette.background.default;
+  const primaryLight = theme.palette.primary.light;
+  const alt = theme.palette.background.alt;
+  const primary=theme.palette.primary.main;
+
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  
   const handleFileUpload = (acceptedFiles) => {
     setLoading(true);
     try{
@@ -136,7 +147,7 @@ useEffect(() => {
           pauseOnHover: true, // Whether hovering over the notification pauses the autoClose timer
           draggable: true, // Whether the notification can be dragged
           progress: undefined, // Custom progress bar (can be a React element)
-          // Other options for customizing the notification
+        theme:'colored',
         });
         navigate('/manage/medications')
     }
@@ -152,7 +163,7 @@ useEffect(() => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "light",
+          theme: "colored",
           });
     }
       } 
@@ -166,7 +177,7 @@ useEffect(() => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "light",
+          theme: "colored",
           });
       }
 
@@ -190,7 +201,7 @@ else{
   }));
 }
     console.log('Edited Data:', updatedData);
-
+//
     // Call the medication function with the updated data
     await medication(updatedData);
   } catch (error) {
@@ -206,44 +217,64 @@ else{
 
   return (
     <>
+   
      {isPermitted ? (
       isNonMobile ? (
         <>
         {(role==='admin')&&(
- <TextField
- label="Pharmacy"
- name="pharmacy"
- select
- SelectProps={{
-   native: true,
- }}
- value={selectedPharmacyData}
- onChange={(event) => setSelectedPharmacyData(event.target.value)}
- margin="normal"
- variant="outlined"
- fullWidth
->
- <option value="">Select Pharmacy</option>
- {pharmacies.map((pharmacy) => (
-   <option key={pharmacy._id} value={pharmacy._id}>
-     {pharmacy.name}
-   </option>
- ))}
-</TextField>
+ <>
+<Typography variant='h6' color='primary' fontWeight='bold' sx={{pb:'0.9rem'}}> Choose A Pharmacy </Typography>
+<Autocomplete
+                options={pharmacies}
+                getOptionLabel={(option) => option.name}
+                value={pharmacies.find((pharmacy) => pharmacy._id === selectedPharmacyData) || null}
+                onChange={(event, newValue) => {
+                  setSelectedPharmacyData(newValue ? newValue._id : null);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Pharmacy"
+                    error={false} // Set error state as needed
+                    helperText={null} // Helper text for errors
+                    variant="outlined"
+                    fullWidth
+                  />
+                )}
+                sx={{ gridColumn: "span 3",mb:'1rem' }}
+              />
+</>
         )}
        
         <div>
+        <Typography variant='h6' color='primary' fontWeight='bold' sx={{my:'0.4rem'}}>Choose Medication File </Typography>
+
       <Dropzone onDrop={handleFileUpload} accept=".csv">
         {({ getRootProps, getInputProps }) => (
-          <div {...getRootProps()}>
+          <Box {...getRootProps()}
+          sx={{
+            marginY:'1rem',
+            border: '2px dashed #ccc',
+            borderRadius: '8px',
+            padding: '20px',
+            textAlign: 'center',
+            cursor: 'pointer',
+            '&:hover': {
+              borderColor: primary,
+            },
+          }}
+          >
             <input {...getInputProps()} />
-            <p>click to select a file</p>
-          </div>
+            <p>click to select a file - only csv</p>
+          </Box>
         )}
       </Dropzone>
 
       {/* Display the CSV data */}
-      {editedData && (
+      {editedData.length>0 && (
+        <>
+      <Typography variant='h6' color='primary' fontWeight='bold' sx={{pb:'0.4rem'}}>Medication Details </Typography>
+
         <table>
           <tbody>
             {editedData.map((row, rowIndex) => (
@@ -283,12 +314,13 @@ else{
             ))}
           </tbody>
         </table>
+        </>
       )}
 
       {/* Submit button */}
-      {editedData&&(
+      {editedData.length>0&&(
         <>
-              <Button variant="contained" onClick={handleSubmit}>Submit</Button>
+              <Button variant="contained" onClick={handleSubmit} sx={{color:alt}}>Submit</Button>
         </>
       )}
     </div>
@@ -302,6 +334,7 @@ else{
     ) : (
       <NotPermitted />
     )}
+
     </>
    
     

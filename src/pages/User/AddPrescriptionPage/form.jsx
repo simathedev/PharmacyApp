@@ -15,6 +15,9 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
+import LoadingSmallWidget from 'components/widgets/LoadingSmallWidget';
+import Loading from 'components/Loading';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
 
 const Form = () => {
   const prescriptionSchema = yup.object().shape({
@@ -37,6 +40,8 @@ const Form = () => {
   const navigate = useNavigate();
   const [medications, setMedications] = useState([]);
   const [pharmacies, setPharmacies] = useState([]);
+  const [isLoading,setIsLoading]=useState(false);
+  const [isSaving,setIsSaving]=useState(false)
   const token = useSelector((state) => state.auth.token);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const role= useSelector((state) => state.auth.role);
@@ -87,6 +92,7 @@ const Form = () => {
 
     fetchPharmacies();
     fetchMedications();
+    setIsLoading(false);
     console.log('medications: ',medications);
   }, [token]);
 
@@ -101,6 +107,7 @@ const Form = () => {
         body: JSON.stringify(values),
       });
       if (prescriptionResponse.ok) {
+        setIsSaving(false)
         onSubmitProps.resetForm();
         toast.success('Prescription Successfully Submitted. Awaiting Pharmacy Approval.', { 
           // Position of the notification
@@ -114,6 +121,7 @@ const Form = () => {
         });
         navigate('/user/view/prescriptions')
       } else {
+        setIsSaving(false)
         console.log('Failed to submit the prescription form');
         toast.error('Prescription Submission Unsuccessful', {
           position: "top-right",
@@ -127,6 +135,7 @@ const Form = () => {
           });
       }
     } catch (error) {
+      setIsSaving(false)
       console.error('Error in prescription function:', error);
       toast.error('Prescription Submission Unsuccessful', {
         position: "top-right",
@@ -143,6 +152,7 @@ const Form = () => {
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
+      setIsSaving(true);
       const approved = !!values.approved
       const updatedValues = {
         ...values,
@@ -156,7 +166,14 @@ const Form = () => {
       console.error('Error submitting form:', error);
     }
   };
-
+if(isLoading)
+{
+  return <Loading/>
+}
+if (isSaving)
+{
+  return <ProgressLoadWidget name='prescription' text='submitting'/>
+}
   return (
     <Formik
       initialValues={initialValuesPrescription}

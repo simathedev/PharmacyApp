@@ -20,17 +20,17 @@ const Index = () => {
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
   const isLargeScreen= useMediaQuery("(min-width:900px)");
-  const isMediumScreen = useMediaQuery("(min-width:600px) and (max-width:800px)");
+  const isMediumScreen = useMediaQuery("(min-width:600px) and (max-width:899px)");
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
-  
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+ 
   return (
     <Box
       display="flex"
       justifyContent="center"
-      alignItems="center"
      minHeight="100vh" // Ensure full viewport height
     >
-      <Box width={isSmallScreen ? '70%' : '60%'} display="flex" flexDirection="column">
+      <Box width={isSmallScreen ? '70%' : '60%'} display="flex" flexDirection="column" marginTop={isLargeScreen?'7rem':isMediumScreen?'10rem':'5rem'}>
       
       <Box  display='flex' flexDirection='column' alignItems='center'>
       <FaPills color='#00A3FF' style={{paddingRight:'0.5rem'}} fontSize={isLargeScreen?'3.2rem':'2rem'}/>
@@ -48,7 +48,7 @@ const Index = () => {
             { icon: <FaUserDoctor />, text: 'Admin', link: '/signIn/admin' },
             
           ].map((item, index) => (
-            <Grid item key={index} xs={10} >
+        <Grid item key={index} xs={10} sm={7} sx={{display:'flex',flexDirection:'column'}}>
               <Link to={item.link} style={{ textDecoration: 'none' }}>
                 <Card
                 sx={{

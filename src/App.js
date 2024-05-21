@@ -48,7 +48,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import AddBulkMedicationPage from './pages/AddBulkMedicationPage';
 import userScriptPage from './pages/User/AddPrescriptionPage';
 import MedicationDetailsPage from './pages/User/MedicationDetailsPage';
-
+import PrescriptionDetailsPage from './pages/User/PrescriptionDetailsPage';
+import OrderOutcomePage from './pages/User/OrderOutcomePage';
+import ViewDetailsPage from './pages/ViewDetailsPage';
 
 function App() {
   const mode=useSelector ((state)=>state.auth.mode);
@@ -59,7 +61,8 @@ function App() {
     <Layout>
     <Routes>
      
-    <Route path="/" element={<HomePage/>}/>
+    <Route path="/" element={<SplashPage/>}/>
+    <Route path="/home" element={<HomePage/>}/>
     <Route path="/register/:userType?" element={<UserRegisterPage/>}/>
     <Route path="/signIn/:userType?" element={<UserLoginPage/>}/>
     <Route path="/admin/" element={<AdminDashboardPage/>}/>
@@ -82,11 +85,17 @@ function App() {
     <Route path="/Edit/Medication/:id" element={<EditMedicationPage/>}/>
     <Route path="/Edit/Prescription/:id" element={<EditPrescriptionPage/>}/>
 
+    <Route path="/view/:pageType/:id" element={<ViewDetailsPage/>}/>
+  
     <Route path="/user/" element={<UserHomePage/>}/>
     <Route path="/user/add/prescription" element={<AddUserPrescriptionPage/>}/>
     <Route path="/user/view/prescriptions" element={<UserPrescriptionPage/>}/>
+    <Route path="/user/view/prescription/:id" element={<PrescriptionDetailsPage/>}/>
     <Route path="/user/view/orders" element={<UserOrderPage/>}/>
     <Route path="/user/view/order/:id" element={<OrderDetailsPage/>}/>
+
+
+
     <Route path="/view/account" element={<UserAccountPage/>}/>
     <Route path="/user/edit/:field?" element={<EditUserDetailsPage/>}/>
     <Route path="/Add/User" element={<AddUserPage/>}/>
@@ -98,8 +107,8 @@ function App() {
     <Route path='/delete' element={<DeleteItem/>}/>
     <Route path='/cart' element={<CartPage/>}/>
     <Route path='/checkout' element={<CheckoutPage/>}/>
-    <Route path='/splash' element={<SplashPage/>}/>
-    <Route path='/favourites' element={<FavouritesPage/>}/>
+    <Route path='/checkout/orderConfirmation' element={<OrderOutcomePage/>}/>
+    <Route path='/user/favourites' element={<FavouritesPage/>}/>
     <Route path='/user/add/script' element={<userScriptPage/>}/>
   
   

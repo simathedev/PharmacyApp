@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { Box, Typography, FormControl, Select, MenuItem, TextField, Button, Checkbox, FormGroup, FormControlLabel, Slider } from '@mui/material';
+import { Box, Typography, useTheme, FormControl, Select, MenuItem, TextField, Button, Checkbox, FormGroup, FormControlLabel, Slider } from '@mui/material';
 
 const OrderFilter = ({ handleFilter }) => {
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const background = theme.palette.background.default;
+  const primaryLight = theme.palette.primary.light;
+  const alt = theme.palette.background.alt;
+  const primary=theme.palette.primary.main;
   const [deliveryType, setDeliveryType] = useState('all'); // Initialize deliveryType state with 'all'
   const [orderStatus, setOrderStatus] = useState([]);
 
@@ -70,8 +77,8 @@ const OrderFilter = ({ handleFilter }) => {
       </FormGroup>
     
       <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button variant="contained" onClick={handleApplyFilter}>Apply Filter</Button>
-        <Button variant="contained" onClick={handleClearFilter}>Clear Filter</Button>
+        <Button variant="contained" sx={{color:alt}} onClick={handleApplyFilter}>Apply Filter</Button>
+        <Button variant="outlined" onClick={handleClearFilter}>Clear Filter</Button>
       </Box>
     </Box>
   );

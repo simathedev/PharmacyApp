@@ -14,11 +14,15 @@ import {
     Chip,
     MenuItem,
     useTheme,
+    Card
   } from '@mui/material';
   import { useDispatch,useSelector } from "react-redux";
   import { useNavigate } from "react-router-dom";
   import { toast } from 'react-toastify';
-  
+  import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
+  import Loading from 'components/Loading';
+
+
   const Form = () => {
     const orderSchema = yup.object().shape({
     user: yup.string().required("User is required"),
@@ -49,6 +53,8 @@ import {
     };
     const [orders, setOrders] = useState([]);
     const [users, setUsers] = useState([]);
+    const [isLoading,setIsLoading]=useState(true);
+    const [isSaving,setIsSaving]=useState(false);
     const [medications, setMedications] = useState([]);
     const [pharmacies, setPharmacies] = useState([]);
 
@@ -145,6 +151,7 @@ import {
         };
       
         fetchMedications();
+        setIsLoading(false);
       }, [token, role, selectedPharmacy,selectedPharmacyId])
   
     const order=async(values,onSubmitProps)=>{
@@ -160,6 +167,7 @@ import {
           body:JSON.stringify(values),
         });
       if(orderResponse.ok){
+        setIsSaving(false);
           onSubmitProps.resetForm();
           navigate("/manage/orders");
           toast.success('Order Successful', { 
@@ -174,6 +182,7 @@ import {
       }
       //if (goalData)
       else{
+        setIsSaving(false);
           console.log("failed to submit the order form");
           toast.error('Order Unsuccessful', {
             position: "top-right",
@@ -190,6 +199,7 @@ import {
           // ...rest of the code
         } 
         catch (error) {
+          setIsSaving(false);        
           console.error("Error in order function:", error);
           toast.error('Order Unsuccessful', {
             position: "top-right",
@@ -207,6 +217,7 @@ import {
    
     const handleSubmit = async (values, onSubmitProps) => {
       try {
+        setIsSaving(true);
         console.log('values in add order page: ',values);
    
        const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
@@ -252,12 +263,26 @@ import {
             <Box 
              display="grid"
              gap="30px"
+             position="relative"
              gridTemplateColumns="repeat(4, minmax(0, 1fr))"
              sx={{
                "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
              }}
             >
-          
+          {isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Order' text='Adding'/>
+
+        </Card>
+        )}
           {role==='admin'&&
             (
               <Autocomplete

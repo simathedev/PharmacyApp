@@ -58,7 +58,7 @@ import { FaPills } from "react-icons/fa";
           navigate('/Admin');
           break;
         default:
-          navigate('/');
+          navigate('/home');
           break;
       }
     };
@@ -70,11 +70,15 @@ import { FaPills } from "react-icons/fa";
 
     }
   }
-  const fullName = `${capitalizeFirstLetter(user?.firstName)} ${capitalizeFirstLetter(user?.lastName)}`;
+  const fullName =  `${capitalizeFirstLetter(user?.firstName)} ${capitalizeFirstLetter(user?.lastName)}`;
   const handleLogout = () => {
    // dispatch(setLogout());
-    navigate("/");
+    navigate("/home");
   };
+  const handleLogin = () => {
+    // dispatch(setLogout());
+     navigate("/home");
+   };
   const roleLinks = {
     user: [
       { path: '/view/account', label: 'My Profile' },
@@ -111,7 +115,7 @@ const renderLinksBasedOnRole = () => {
       <Box sx={{zIndex:9999}}>
       <FlexBetween padding="1rem 6%">
             <FlexBetween gap="1rem">
-            <FaPills color='#00A3FF' fontSize={isLargeScreen?'2.3rem':'1.6rem'}/>
+            <FaPills color='#00A3FF' fontSize={isLargeScreen?'2.3rem':'1.4rem'}/>
             <Typography
             fontWeight="bold"
             fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -160,9 +164,15 @@ const renderLinksBasedOnRole = () => {
               input={<InputBase />}
             >
               <MenuItem value={fullName}>
-                <Typography>{fullName}</Typography>
+                <Typography>{user?fullName:'User'}</Typography>
               </MenuItem>
-              <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+              {
+                user?
+                <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+                :
+                <MenuItem onClick={handleLogin}>Log In</MenuItem> 
+              }
+            
             </Select>
           </FormControl>
  
@@ -231,7 +241,7 @@ const renderLinksBasedOnRole = () => {
               )}
             </IconButton> 
            
-                <FormControl variant="standard" value={fullName}>
+            <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}
                 sx={{

@@ -10,19 +10,24 @@ import {
   FormControlLabel,
   Checkbox,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Card
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate,useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { ContactSupportOutlined } from '@mui/icons-material';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
+import Loading from 'components/Loading';
 
 const Form = () => {
   const { id } = useParams();
   console.log("id: ",id)
   const validationPrescriptionSchema = yup.object().shape({
-    startDate:yup.date(),
-    repeats:yup.string,
+    //startDate:yup.date(),
+    //repeats:yup.string,
+    doctor:yup.string(),
+    //
   });
   const validationPharmacySchema = yup.object().shape({
     pharmacy: yup.string().required('Pharmacy is required'),
@@ -36,13 +41,20 @@ const Form = () => {
   const [pharmacies, setPharmacies] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
   const [pharmacyMedications, setPharmacyMedications] = useState([]);
-  const [isLoading,setIsLoading]=useState(true)
+  //const [isLoading,setIsLoading]=useState(true);
+  const [isSaving,setIsSaving]=useState(false);
   const [responseData, setResponseData]=useState([]);
   const [initialValues, setInitialValues] = useState({});
 const [validationSchema, setValidationSchema] = useState(yup.object());
   const [showPrescriptionInfoFields, setShowPrescriptionInfoFields] = useState(false);
   const [showPharmacyFields, setShowPharmacyFields] = useState(false);
   const [showApprovedFields, setShowApprovedFields] = useState(false);
+ //button feature testing:
+ const [showPrescriptionButton, setShowPrescriptionButton] = useState(true);
+ const [showPharmacyButton, setShowPharmacyButton] = useState(true);
+ const [showApprovedButton, setShowApprovedButton] = useState(true);
+
+ 
   const token = useSelector((state) => state.auth.token);
   const { palette } = useTheme();
   const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -79,6 +91,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
       });
       if (response.ok) {
         const pharmaciesData = await response.json();
+        console.log("edit pharmacy data in prescription page: ",pharmaciesData)
         setPharmacies(pharmaciesData);
       } else {
         console.log('Failed to fetch pharmacies');
@@ -102,7 +115,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
         setPrescriptions(prescriptionData);
         
       setInitialValues({
-        pharmacy: prescriptions.pharmacy || '',
+        pharmacy: prescriptions.pharmacy._id || '',
         user: prescriptions.user || '',
         doctor: prescriptions.doctor || '',
         repeats: prescriptions.repeats||'',
@@ -137,14 +150,14 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
     
       setInitialValues({
         medications: initialMedications|| [],
-        pharmacy: prescriptions.pharmacy || '',
+        pharmacy: prescriptions.pharmacy._id || '',
         user: prescriptions.user || '',
         doctor: prescriptions.doctor || '',
         repeats: prescriptions.repeats||'',
         startDate:prescriptions.startDate||'',
         approved: prescriptions.approved || '',
       });
-      //setValidationSchema(validationPrescriptionSchema);
+      setValidationSchema(validationPrescriptionSchema);
     } else {
       switch (true) {
         case showPrescriptionInfoFields:
@@ -160,7 +173,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
           break;
         case showPharmacyFields:
           setInitialValues({
-            pharmacy: prescriptions.pharmacy || '',
+            pharmacy: prescriptions.pharmacy._id || '',
           });
           setValidationSchema(validationPharmacySchema);
           break;
@@ -174,6 +187,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
           setValidationSchema(yup.object());
       }
     }
+   // setIsLoading(false);
   };
   
   useEffect(() => {
@@ -193,6 +207,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
         body: JSON.stringify(values),
       });
       if (prescriptionResponse.ok) {
+        setIsSaving(false);
         onSubmitProps.resetForm();
         navigate("/manage/prescriptions");
         toast.success('Prescription Successfully Updated.', { 
@@ -206,6 +221,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
         });
 
       } else {
+        setIsSaving(false);
         console.log('Failed to submit the prescription form');
         toast.error('Prescription Update Unsuccessful', {
           position: "top-right",
@@ -219,6 +235,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
           });
       }
     } catch (error) {
+      setIsSaving(false);
       console.error('Error in prescription function:', error);
       toast.error('Prescription Update Unsuccessful', {
         position: "top-right",
@@ -237,6 +254,9 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
     setShowPrescriptionInfoFields(!showPrescriptionInfoFields);
     setShowApprovedFields(false);
      setShowPharmacyFields(false);
+     /*setShowPrescriptionButton(true);
+     setShowApprovedButton(false);
+     setShowPharmacyButton(false);*/
    
 };
 
@@ -244,16 +264,23 @@ const handlePharmacyClick = () => {
   setShowPharmacyFields(!showPharmacyFields);
   setShowPrescriptionInfoFields(false);
    setShowApprovedFields(false);
+   /*setShowPrescriptionButton(false);
+   setShowApprovedButton(false);
+   setShowPharmacyButton(true);*/
 };
 
 const handleApprovedClick = () => {
   setShowApprovedFields(!showApprovedFields);
   setShowPrescriptionInfoFields(false);
   setShowPharmacyFields(false);
+  /*setShowPrescriptionButton(false);
+  setShowApprovedButton(true);
+  setShowPharmacyButton(false);*/
 };
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
+      setIsSaving(true);
       const user=prescriptions.user;
       const approved = values.approved && values.approved[0] === 'on';
       const dataToSend = {
@@ -264,13 +291,15 @@ const handleApprovedClick = () => {
   
       console.log('Submitting prescription:', dataToSend);
   
-     // await prescription(dataToSend, onSubmitProps);
+      await updatePrescription(dataToSend, onSubmitProps);
       
     } catch (error) {
       console.error('Error submitting form:', error);
     }
   };
-
+/*if (isLoading){
+  return <Loading/>
+}*/
   return (
     <Formik
     enableReinitialize={true}
@@ -291,32 +320,72 @@ const handleApprovedClick = () => {
         <Box 
         display="grid"
         gap="30px"
+        position="relative"
         gridTemplateColumns="repeat(4, minmax(0, 1fr))"
         sx={{
           "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
         }}
         >
-  <Button 
+      
+        {isSaving&&(
+          <Card
+          sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+       }}>
+         <ProgressLoadWidget name='Prescription' text='Updating'/>
+       </Card>
+       )}
+      {/* {showPrescriptionButton&&(
+        <Button 
               onClick={handlePrescriptionInfoClick}
               sx={{ gridColumn: "span 4" }}
             >
               {showPrescriptionInfoFields ? "Hide Prescription Info" : "Edit Prescription Info"}
             </Button>
+       )}
+         {showPharmacyButton&&(
+        <Button 
+        onClick={handlePharmacyClick}
+        sx={{ gridColumn: "span 4" }}
+        >
+        {showPharmacyFields ? "Hide Pharmacy" : "Edit Pharmacy"}
+        </Button>
+      )}
+     {showApprovedButton&&(
+      <Button 
+      onClick={handleApprovedClick}
+      sx={{ gridColumn: "span 4" }}
+      >
+      {showApprovedFields ? "Hide Approved" : "Edit Approved"}
+      </Button>
+    )}*/}
+   
+      <Button
+        onClick={handlePrescriptionInfoClick}
+        sx={{ display: showPharmacyFields || showApprovedFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showPrescriptionInfoFields ? 'Hide Prescription Info' : 'Edit Prescription Info'}
+      </Button>
 
-            <Button 
-              onClick={handlePharmacyClick}
-              sx={{ gridColumn: "span 4" }}
-            >
-              {showPharmacyFields ? "Hide Pharmacy" : "Edit Pharmacy"}
-            </Button>
+      <Button
+        onClick={handlePharmacyClick}
+        sx={{ display: showPrescriptionInfoFields || showApprovedFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showPharmacyFields ? 'Hide Pharmacy' : 'Edit Pharmacy'}
+      </Button>
 
-            <Button 
-              onClick={handleApprovedClick}
-              sx={{ gridColumn: "span 4" }}
-            >
-              {showApprovedFields ? "Hide Approved" : "Edit Approved"}
-            </Button>
-        
+      <Button
+        onClick={handleApprovedClick}
+        sx={{ display: showPrescriptionInfoFields || showPharmacyFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showApprovedFields ? 'Hide Approved' : 'Edit Approved'}
+      </Button>
+  
           {showPrescriptionInfoFields&&(
             <>
 
@@ -425,29 +494,37 @@ const handleApprovedClick = () => {
 ))} */}     
            
 {showPharmacyFields&&(
-  <TextField
-  label="Pharmacy"
-  name="pharmacy"
-  select
-  SelectProps={{
-    native: true,
-  }}
-  value={values.pharmacy}
-  onChange={handleChange}
-  onBlur={handleBlur}
-  error={touched.pharmacy && Boolean(errors.pharmacy)}
-  helperText={touched.pharmacy && errors.pharmacy}
-  margin="normal"
-  variant="outlined"
-  sx={{ gridColumn: "span 4" }}
->
-  <option value="">Select Pharmacy</option>
-  {pharmacies.map((pharmacy) => (
-    <option key={pharmacy._id} value={pharmacy._id}>
-      {pharmacy.name}
-    </option>
-  ))}
-</TextField>
+
+<Autocomplete
+              options={pharmacies}
+              getOptionLabel={(option) => option.name}
+              value={pharmacies.find((pharmacy) => pharmacy._id === values.pharmacy) || null}
+              onChange={(event, newValue) => {
+                handleChange({
+                  target: {
+                    name: 'pharmacy',
+                    value: newValue ? newValue._id : '',
+                  },
+                });
+               // (newValue ? newValue._id : '')
+              }}
+              onBlur={handleBlur}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Pharmacy"
+                  name="pharmacy"
+                  error={touched.pharmacy && Boolean(errors.pharmacy)}
+                  helperText={touched.pharmacy && errors.pharmacy}
+                  margin="normal"
+                  variant="outlined"
+                />
+              )}
+              sx={{ gridColumn: "span 4" }}
+            />
+
+
+
 )}
          
           {showApprovedFields&&(

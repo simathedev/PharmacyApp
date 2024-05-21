@@ -48,10 +48,15 @@ const MedicationNotification = () => {
       };
       fetchFinishedMedication();
   }, [token]);
+  if (medications.length === 0) {
+    return <Typography fontStyle='italic'>No medication found.</Typography>;
+  }
+
   return (
 
     <Box sx={{borderRadius:'2%',padding:'2px 4px'}}>
- <Typography>Medication Notification</Typography>
+ {/*<Typography>Medication Notification</Typography>*/}
+ 
  {medications?.map((medication) => (
         <Card key={medication._id} sx={{backgroundColor:alt,my:2,px:isNonMobile?4:5,py:1,textAlign:'left'}}>
           <Grid container spacing={2}>
@@ -76,7 +81,9 @@ const MedicationNotification = () => {
           </Grid>
         </Card>
       ))}
+      <Link to={`/manage/medications?inStock=${encodeURIComponent('false')}`} style={{ textDecoration: 'none' }}>
       <Button>View More</Button>
+      </Link>
     </Box>
   );
 };

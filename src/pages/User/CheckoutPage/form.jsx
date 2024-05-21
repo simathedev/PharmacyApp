@@ -32,7 +32,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
      });
     const collectionSchema = yup.object().shape({
         userPhoneNumber:yup.string().required("Phone number is required."),
-        pharmacy: yup.string(),
+        //pharmacy: yup.string(),
         });
         const cardSchema = yup.object().shape({
           cardNumber:yup.string().required("Phone number is required."),
@@ -92,7 +92,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
           case 'pharmacy':
             setInitialValues({
             userPhoneNumber:user.phoneNumber||'',
-            pharmacy: '',
+            //pharmacy: '',
             })
             setValidationSchema(collectionSchema);
             break;
@@ -155,6 +155,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
             >
                 {section === 'pharmacy' && (
                     <>
+{/*
 <TextField
               label="Pharmacy"
               name="pharmacy"
@@ -178,6 +179,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
                 </option>
               ))}
             </TextField>
+                */}
             
             <TextField
                 label="Phone Number"

@@ -12,6 +12,10 @@ import Navbar from "components/navbar";
 import NotPermitted from "components/NotPermitted";
 import PrescriptionFilter from "components/PrescriptionFilter";
 import SearchWidget from "components/widgets/Search";
+import Loading from "components/Loading";
+import NoDataFound from "components/widgets/NoDataFound";
+import { useLocation } from 'react-router-dom';
+
 
 const ManageScriptsPage = () => {
   const theme = useTheme();
@@ -21,11 +25,12 @@ const ManageScriptsPage = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
-
+//
   const token = useSelector((state) => state.auth.token);
   const [prescriptions, setPrescriptions] = useState([]);
   const [medicationName, setMedicationName] = useState('');
-  const[filteredScripts,setFilteredScripts]=useState([]);
+  const[filteredScripts,setFilteredScripts]=useState(false);
+  const [sortedPrescriptions,setSortedPrescriptions]=useState([])
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('dateAsc');
   const selectedPharmacy=useSelector((state)=>state.auth.pharmacy);
@@ -33,18 +38,23 @@ const ManageScriptsPage = () => {
 const [userName,setUserName]=useState('');
 const [deleteItemId,setDeleteItemId]=useState(null);
 const [showFilters, setShowFilters] = useState(false);
-const [loading, setLoading] = useState(true);
+const [isLoading, setIsLoading] = useState(true);
 const isNonMobile = useMediaQuery("(min-width:600px)");
 const isLargeScreen= useMediaQuery("(min-width:900px)");
 const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
 const isPermitted=role==='pharmacist'||role==='admin';
 
+const location = useLocation();
+const searchParams = new URLSearchParams(location.search);
+const approvedOutcome = searchParams.get('approved');
+console.log("search params scripts:",approvedOutcome);
+
 const fetchScripts = async () => {
-  setLoading(true);
+  setIsLoading(true);
   try {
     let apiUrl;
       let pharmacyId;
-      pharmacyId = selectedPharmacy._id;
+      pharmacyId = selectedPharmacy?._id;
       console.log("pharmacy id: ",pharmacyId);
       if(role==='pharmacist'&&selectedPharmacy){
         apiUrl=`http://localhost:3001/prescription/getPrescriptions/${pharmacyId}` 
@@ -62,7 +72,14 @@ const fetchScripts = async () => {
     if (response.ok) {
       const prescriptionsData = await response.json();
       console.log('Prescription data: ',prescriptionsData);
-      setPrescriptions(prescriptionsData);
+      let prescriptionsFilterData;
+     if (approvedOutcome==='false') {
+        prescriptionsFilterData = prescriptionsData.filter(script => script.approved === false);
+        setPrescriptions(prescriptionsFilterData);
+      } else {
+        setPrescriptions(prescriptionsData);
+      }
+   
    } else {
       console.log("Failed to fetch prescriptions");
     }
@@ -70,7 +87,7 @@ const fetchScripts = async () => {
     console.error("Error fetching prescriptions:", error);
   }
   finally {
-    setLoading(false); // Set loading to false when data fetching is completed
+    setIsLoading(false); 
   }
 };
 
@@ -102,26 +119,62 @@ const fetchScripts = async () => {
       console.log(deleteItemId);
      
     }
-    const searchScripts = prescriptions.filter(prescription => {
-      const searchQueryLower = searchQuery.toLowerCase();
-      const fullName = `${prescription.user.firstName} ${prescription.user.lastName}`.toLowerCase();
-      return (
-        fullName.includes(searchQueryLower) ||
-        prescription._id.includes(searchQuery)
-      );
-    });
 
-    const sortedScripts = searchScripts.slice().sort((a, b) => {
-      switch (sortBy) {
-        case 'dateAsc': 
-          return new Date(a.startDate) - new Date(b.startDate);
-        case 'dateDesc':
-          return new Date(b.startDate) - new Date(a.startDate);
-        default:
-          return 0;
+    useEffect(() => {
+  
+      let searchScripts;
+      let sortedScripts;
+
+      searchScripts = prescriptions.filter(prescription => {
+        const searchQueryLower = searchQuery.toLowerCase();
+        const fullName = `${prescription?.user?.firstName} ${prescription?.user?.lastName}`.toLowerCase();
+        return (
+          fullName.includes(searchQueryLower) ||
+          prescription?._id.includes(searchQuery)
+        );
+      });
+
+      // Sort medications based on selected criteria
+      if(filteredScripts)
+      {
+        searchScripts = prescriptions.filter(prescription => {
+          const searchQueryLower = searchQuery.toLowerCase();
+          const fullName = `${prescription?.user?.firstName} ${prescription?.user?.lastName}`.toLowerCase();
+          return (
+            fullName.includes(searchQueryLower) ||
+            prescription?._id.includes(searchQuery)
+          );
+        });
+
+    sortedScripts = searchScripts.slice().sort((a, b) => {
+          switch (sortBy) {
+            case 'dateAsc': 
+              return new Date(a.startDate) - new Date(b.startDate);
+            case 'dateDesc':
+              return new Date(b.startDate) - new Date(a.startDate);
+            default:
+              return 0;
+          }
+        });
       }
-    });
+      else{
+
+       sortedScripts = searchScripts.slice().sort((a, b) => {
+          switch (sortBy) {
+            case 'dateAsc': 
+              return new Date(a.startDate) - new Date(b.startDate);
+            case 'dateDesc':
+              return new Date(b.startDate) - new Date(a.startDate);
+            default:
+              return 0;
+          }
+        });
+      }
     
+      // Update sortedMedications state
+      setSortedPrescriptions(sortedScripts);
+    }, [prescriptions, searchQuery, sortBy]);
+
 
     const applyFilter = (filter) => {
       let filteredPrescriptions = prescriptions.slice(); // Create a shallow copy of the prescriptions array
@@ -145,24 +198,24 @@ const fetchScripts = async () => {
       }
     
       // Update the prescriptions after applying filter
-      setPrescriptions(filteredPrescriptions);
+      setSortedPrescriptions(filteredPrescriptions);
+      setFilteredScripts(true); // Ensure this triggers a re-render
     };
     
     
+    if(isLoading)
+    {
+      return <Loading/>
+    }
     
 
   return (
     <>
     {isPermitted?(
       <>
- {loading?(
- <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
- <CircularProgress />
- <Typography variant='h4' color='primary' sx={{px:2}}>Loading...</Typography>
-</Box>
-    ):(
+
     <Box sx={{textAlign:'center'}}>
-      <Typography variant={isNonMobile?'h1':'h2'} sx={{mt:isNonMobile?5:2}}>Manage Prescriptions</Typography>
+      <Typography variant={isNonMobile?'h1':'h3'} sx={{mt:isNonMobile?5:2}}>Manage Prescriptions</Typography>
       <SearchWidget searchQuery={searchQuery} setSearchQuery={setSearchQuery} isNonMobile={isNonMobile}/>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
       {
@@ -194,7 +247,6 @@ const fetchScripts = async () => {
           </Select>
         </FormControl>
       </Card>
-
       <Box sx={{width:'40%',justifyContent:'left',display:'flex',flexDirection:'column'}}>
   <Button
   sx={{
@@ -224,17 +276,18 @@ const fetchScripts = async () => {
   </Box>
       
 
-      {prescriptions?.length === 0 && (
-          <Typography variant="h4">No Prescriptions found...</Typography>
+      {sortedPrescriptions?.length === 0 && (
+        <NoDataFound name='Scripts' icon='FaNotesMedical'/>
         )}
-     {sortedScripts?.map((medication) => (
-        <Card key={medication._id}sx={{backgroundColor:alt,my:3,pl:isNonMobile?4:5,py:5,textAlign:'left'}}>
+     {sortedPrescriptions?.map((medication) => (
+        <Card key={medication?._id}sx={{backgroundColor:alt,my:3,pl:isNonMobile?4:5,py:isNonMobile?5:3,textAlign:'left'}}>
           <Grid container spacing={2}>
           <Grid item xs={6}>
           <FaNotesMedical color='lightBlue' fontSize={isNonMobile?'4rem':'2rem'}/>
-            <Typography color='primary' fontWeight='500' variant={isNonMobile?'h3':'h5'} sx={{py:2}}>Prescription: {medication._id}</Typography>
+          <Link to={`/view/prescription/${medication._id}`} style={{textDecoration:'none'}}>
+          <Typography color='primary' fontWeight='500' variant={isNonMobile?'h4':'h5'} sx={{py:2}}>Prescription: {medication?._id}</Typography>
+          </Link>
             <Typography fontWeight='500' variant='body1' sx={{py:2}}>Medication:</Typography>
-
             {medication.medications.map((medication, index) => (
           <Typography variant='body1' sx={{ fontSize: '12px',display:'flex' }}>
             {medication.medication.name} {'x'+medication.quantity},
@@ -242,25 +295,18 @@ const fetchScripts = async () => {
       ))}
           
             <Typography variant='body1'sx={{py:0.4}} >Name: {medication.user?.firstName+" "+medication.user?.lastName}</Typography>
-          <Typography variant='body1'sx={{py:0.4}} >Start Date: {medication.startDate}</Typography>
-          <Typography variant='body1' sx={{py:0.4}}>Repeats: {medication.repeats}</Typography>
-          <Typography variant='body1' sx={{py:0.4}}>Doctor: {medication.doctor}</Typography>
+          <Typography variant='body1'sx={{py:0.4}} >Start Date: {medication?.startDate}</Typography>
+          <Typography variant='body1' sx={{py:0.4}}>Repeats: {medication?.repeats}</Typography>
+          <Typography variant='body1' sx={{py:0.4}}>Doctor: {medication?.doctor}</Typography>
           <Typography variant='body1'sx={{py:0.4}} >Approved: {medication.approved ? 'Yes' : 'No'}</Typography>
           </Grid>
        
-          <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:2}}>
-          {/*!medication.approved && (
-    <Button
-      variant="contained"
-      sx={{ bgcolor: 'success.main', color: 'white' }}
-    >
-      Approve
-    </Button>
-          )*/}
-          <Link to={`/Edit/Prescription/${medication._id}`}>
+          <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:isNonMobile?2:1}}>
+  
+          <Link to={`/Edit/Prescription/${medication?._id}`}>
           <EditButton/>
           </Link>
-          <DeleteButton onClick={() => setDeleteItemId(medication._id)}/>
+          <DeleteButton onClick={() => setDeleteItemId(medication?._id)}/>
           </Grid>
           </Grid>
         </Card>
@@ -272,7 +318,7 @@ const fetchScripts = async () => {
         deleteItemId={deleteItemId}
     />
     </Box>
-    )}
+   
       </>
     ):(
       <Box sx={{justifyContent:'center',alignItems:'center',textAlign:'center'}}>

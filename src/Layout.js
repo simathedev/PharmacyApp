@@ -24,13 +24,14 @@ const Layout = ({ children }) => {
   const isRegisterPage = location.pathname.startsWith('/register');
   const isSignInPage = location.pathname.startsWith('/signIn');
   const isSplashPage = location.pathname.startsWith('/splash');
+  const isMainSignInPage = location.pathname.startsWith('/home');
 
   return (
     <div style={{backgroundColor:theme.palette.background.testing}}>
-    {isHomePage || isRegisterPage || isSplashPage ||isSignInPage ? null : <Navbar />}
+    {isHomePage ||isMainSignInPage|| isRegisterPage || isSplashPage ||isSignInPage ? null : <Navbar />}
       <main>{children}</main>
       {!isLargeScreen&&
-      (isHomePage || isRegisterPage || isSignInPage?
+      (isHomePage || isMainSignInPage||isRegisterPage ||isSplashPage || isSignInPage?
         null:
       <Shortcuts/>
       )

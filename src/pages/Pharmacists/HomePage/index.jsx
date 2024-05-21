@@ -62,7 +62,7 @@ const Index = () => {
 {role==='pharmacist'?(
 <>
 <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-    <Typography variant="h2" color={palette.primary.main} fontWeight="500" textAlign="center" mb={4} mt={10} >
+    <Typography variant={isNonMobile?"h2":"h3"} color={palette.primary.main} fontWeight="500" textAlign="center" mb={4} mt={10} >
       Welcome, {user.firstName} 
       </Typography>
       <DashboardNotifications/>

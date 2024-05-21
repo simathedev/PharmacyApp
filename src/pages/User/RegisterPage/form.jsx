@@ -16,6 +16,8 @@ import { useNavigate,useParams } from "react-router-dom";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import { toast } from 'react-toastify';
+import ProgressLoadWidget from "components/widgets/ProgressLoadWidget";
+
 
 
 const userSchema = yup.object().shape({
@@ -60,6 +62,7 @@ const Form = () => {
  const [pageType, setPageType] = useState("login");
   //const [userType, setUserType] = useState("user");
   const [pharmacies, setPharmacies] = useState([]);
+  const [isLoading,setIsLoading]=useState(false);
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -69,6 +72,7 @@ const Form = () => {
   const isRegister = pageType === "register";
   const isUser = userType === "user";
   const isPharmacist = userType === "pharmacist";
+  const isAdmin=userType==="admin";
   const token = useSelector((state) => state.auth.token);
   useEffect(() => {
     const fetchPharmacies = async () => {
@@ -118,6 +122,7 @@ const Form = () => {
       onSubmitProps.resetForm();
   
       if (savedUser) {
+        setIsLoading('false');
         setPageType("login");
         //login code:
         navigate(`/signIn/${userType}`);
@@ -129,7 +134,7 @@ const Form = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "light",
+          theme: "colored",
         });
       }
       else{
@@ -141,7 +146,7 @@ const Form = () => {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-          theme: "light",
+          theme: "colored",
         }); 
       }
     } catch (error) {
@@ -154,12 +159,13 @@ const Form = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light",
+        theme: "colored",
       });
     }
   };
   const handleSubmit = async (values, onSubmitProps) => {
     try {
+      setIsLoading(true);
       const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
       const updatedValues = {
         ...values,
@@ -172,14 +178,22 @@ const Form = () => {
     }
   };
   
-
+  
+  if (isLoading)
+  {
+    return <ProgressLoadWidget name='please wait' text='registering, '/>
+  }
+if(isAdmin)
+{
+  return <Typography variant='h5' color='primary' fontWeight='bold'>You Are Not Authorized To Perform This action.</Typography>
+}
   return (
     <Formik
       onSubmit={handleSubmit}
       initialValues={ isUser?initialValuesUser:initialValuesPharmacist}
       validationSchema={isUser?userSchema:pharmacistSchema}
     >
-      {({
+      {({ 
         values,
         errors,
         touched,

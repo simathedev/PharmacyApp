@@ -15,11 +15,14 @@ import {
     Collapse,
     Alert,
     AlertTitle,
+    Card,
     useTheme,
   } from "@mui/material";
   import { useDispatch,useSelector } from "react-redux";
   import { useNavigate } from "react-router-dom";
   import { toast } from 'react-toastify';
+  import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
+import Loading from 'components/Loading';
  
   
   const Form = () => {
@@ -48,7 +51,8 @@ import {
 
     };
     const [pharmacies, setPharmacies] = useState([]);
-
+    const [isLoading,setIsLoading]=useState(true);
+    const [isSaving,setIsSaving]=useState(false);
     const token = useSelector((state) => state.auth.token);
     const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -63,12 +67,15 @@ import {
           },
         });
         if (response.ok) {
+          setIsLoading(false);
           const pharmaciesData = await response.json();
           setPharmacies(pharmaciesData);
         } else {
+          setIsLoading(false);
           console.log('Failed to fetch pharmacies');
         }
       } catch (error) {
+        setIsLoading(false);
         console.error('Error fetching pharmacies:', error);
       }
     };
@@ -92,6 +99,7 @@ import {
         }
       )
       if(pharmacyResponse.ok){
+        setIsSaving(false);
           onSubmitProps.resetForm();
           toast.success('Pharmacist Successfully Created.', { 
             // Position of the notification
@@ -101,12 +109,13 @@ import {
             pauseOnHover: true, // Whether hovering over the notification pauses the autoClose timer
             draggable: true, // Whether the notification can be dragged
             progress: undefined, // Custom progress bar (can be a React element)
-            // Other options for customizing the notification
+            theme:"colored"
           });
           navigate("/admin/pharmacists");
       }
       //if (goalData)
       else{
+        setIsSaving(false);
           console.log("failed to submit the pharmacist form");
           toast.error('Pharmacist Creation Unsuccessful', {
             position: "top-right",
@@ -116,13 +125,14 @@ import {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
       }
 
           // ...rest of the code
         } 
         catch (error) {
+          setIsSaving(false);
           console.error("Error in pharmacist function:", error);
           toast.error('Pharmacist Creation Unsuccessful', {
             position: "top-right",
@@ -132,7 +142,7 @@ import {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
             });
         }
     
@@ -140,7 +150,7 @@ import {
    
     const handleSubmit = async (values, onSubmitProps) => {
       try {
-        // Perform the submission logic here
+        setIsSaving(true);
         console.log('Submitting pharmacist:', values);
         await pharmacist(values, onSubmitProps);
         //resetForm(); // Reset the form after successful submission
@@ -148,6 +158,10 @@ import {
         console.error('Error submitting form:', error);
       }
     };
+    if(isLoading)
+    {
+      return <Loading/>
+    }
   
     return (
       <Formik
@@ -168,10 +182,27 @@ import {
             <Box 
             display="grid"
             gap="30px"
+            position="relative"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
             }}>
+
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Pharmacist' text='Adding'/>
+
+        </Card>
+        )}
+
 
               <TextField
                 label="First Name"

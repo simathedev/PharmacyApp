@@ -12,6 +12,7 @@ import {
   useTheme,
   MenuItem,
   useMediaQuery,
+  Card
 } from '@mui/material';
 import Dropzone from 'react-dropzone';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -20,6 +21,8 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import Loading from 'components/Loading';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
 
 const Form = () => {
 
@@ -45,7 +48,8 @@ const Form = () => {
   const [validationSchema, setValidationSchema] = useState(yup.object());
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [pharmacies, setPharmacies] = useState([]);
-
+  const [isLoading,setIsLoading]=useState(true);
+  const [isSaving,setIsSaving]=useState(false);
   const [orderInfo, setOrderInfo] = useState([]);
   const [pharmacyMedications, setPharmacyMedications] = useState([]);
   const [showOrderInfoFields, setShowOrderInfoFields] = useState(false);
@@ -112,6 +116,7 @@ const Form = () => {
           });
           if (response.ok) {
             const pharmaciesData = await response.json();
+           
             setPharmacies(pharmaciesData);
           } else {
             console.log('Failed to fetch pharmacies');
@@ -121,7 +126,7 @@ const Form = () => {
         }
       };
   
-
+     
       fetchPharmacies();
       fetchOrder();
     fetchMedications();
@@ -187,6 +192,7 @@ const Form = () => {
           setValidationSchema(yup.object());
       }
     }
+    setIsLoading(false);
   };
   
 
@@ -205,6 +211,7 @@ const Form = () => {
         body: JSON.stringify(values),
       });
       if (userResponse.ok) {
+        setIsSaving(false);
         onSubmitProps.resetForm();
         navigate("/manage/orders");
         toast.success('Order Successfully Updated.', { 
@@ -218,6 +225,7 @@ const Form = () => {
         });
 
       } else {
+        setIsSaving(false);
         console.log('Failed to submit the order form');
         toast.error('Order Update Unsuccessful', {
           position: "top-right",
@@ -231,6 +239,7 @@ const Form = () => {
           });
       }
     } catch (error) {
+      setIsSaving(false);
       console.error('Error in order function:', error);
       toast.error('Order Update Unsuccessful', {
         position: "top-right",
@@ -247,6 +256,7 @@ const Form = () => {
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
+      setIsSaving(true);
       const user=orderInfo.user;
       const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
       console.log("user ID: ",user);
@@ -293,6 +303,11 @@ const Form = () => {
     setShowOrderInfoFields(false);
   };
 
+  if(isLoading)
+  {
+    return <Loading/>
+  }
+
   return (
     <Formik
     initialValues={initialValues}
@@ -313,12 +328,29 @@ const Form = () => {
         <Box 
          display="grid"
          gap="30px"
+         position="relative"
          gridTemplateColumns="repeat(4, minmax(0, 1fr))"
          sx={{
            "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
          }}
         >
-          <Button 
+
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Order' text='Updating'/>
+
+        </Card>
+        )}
+
+          {/*<Button 
               onClick={handleOrderInfoClick}
               sx={{ gridColumn: "span 4" }}
             >
@@ -336,12 +368,32 @@ const Form = () => {
               sx={{ gridColumn: "span 4" }}
             >
               {showDeliveryTypeFields ? "Hide Delivery Type" : "Edit Delivery Type"}
-            </Button>
+      </Button>*/}
+
+<Button
+        onClick={handleOrderInfoClick}
+        sx={{ display: showOrderStatusField || showDeliveryTypeFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showOrderInfoFields ? 'Hide Order Info' : 'Edit Order Info'}
+      </Button>
+
+      <Button
+        onClick={handleStatusClick}
+        sx={{ display: showOrderInfoFields || showDeliveryTypeFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showOrderStatusField ? 'Hide Order Status' : 'Edit Order Status'}
+      </Button>
+
+      <Button
+        onClick={handleDeliveryClick}
+        sx={{ display: showOrderInfoFields || showOrderStatusField ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showDeliveryTypeFields ? 'Hide Delivery Type' : 'Edit Delivery Type'}
+      </Button>
 
        
           {showOrderInfoFields&&(
             <>
-
 
 <Autocomplete
   multiple

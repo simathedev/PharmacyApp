@@ -1,39 +1,77 @@
 import React from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, useTheme } from '@mui/material';
+import { useSelector } from "react-redux";
+import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, useTheme } from '@mui/material';
 
 const AvailableMedication = ({ medications }) => {
   const theme = useTheme();
-  const neutralLight = theme.palette.neutral.light;
-  const dark = theme.palette.neutral.dark;
-  const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
+  const primary = theme.palette.primary.main;
   const alt = theme.palette.background.alt;
-  const primary=theme.palette.primary.main;
+  const role=useSelector((state)=>state.auth.role);
+
+  // Check if medications is an array before mapping over it
+  if (!Array.isArray(medications) || medications.length === 0) {
+    return (
+      <Typography variant="body1" color="error">
+        No medications available
+      </Typography>
+    );
+  }
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer >
       <Table>
         <TableHead>
-          <TableRow sx={{ backgroundColor:primary }}>
+          <TableRow sx={{ backgroundColor: primary }}>
             <TableCell>
-              <Typography variant="h6" fontWeight="bold" color={alt}>Medication Name</Typography>
+              <Typography variant="h6" fontWeight="bold" color={alt}>
+                Medication Name
+              </Typography>
             </TableCell>
             <TableCell>
-              <Typography variant="h6" fontWeight="bold" color={alt}>Availability</Typography>
+              <Typography variant="h6" fontWeight="bold" color={alt}>
+                Availability
+              </Typography>
+            </TableCell>
+           
+              {role!='user'&&(
+                <>
+                <TableCell>
+                <Typography variant="h6" fontWeight="bold" color={alt}>
+                Qty In Stock
+                </Typography>
+                </TableCell>
+                </>
+              )}
+             
+            <TableCell>
+              <Typography variant="h6" fontWeight="bold" color={alt}>
+                {role==='user'?'Qty Prescribed':'Qty Ordered'}
+              </Typography>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {medications.map((medication) => (
-            <TableRow key={medication._id}>
+            <TableRow key={medication?._id}>
               <TableCell>
-                <Typography variant="body1">{medication.medication.name}</Typography>
+                <Typography variant="body1">{medication?.medication?.name}</Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="body2" color={medication.medication.inStock ? 'success.light' : 'error.light'}>
-                  {medication.medication.inStock ? 'In Stock' : 'Out of Stock'}
+                <Typography variant="body2" fontWeight="bold" color={medication.medication.inStock ? 'green' : 'red'}>
+                  {medication?.medication?.inStock ? 'In Stock' : 'Out of Stock'}
                 </Typography>
               </TableCell>
+              {role!='user'&&(
+<>
+<TableCell>
+  <Typography variant="body1">{medication?.medication?.quantity}</Typography>
+</TableCell>
+</>
+              )}
+    
+<TableCell>
+  <Typography variant="body1">{medication?.quantity}</Typography>
+</TableCell>
             </TableRow>
           ))}
         </TableBody>

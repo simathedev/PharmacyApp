@@ -22,20 +22,30 @@ import DeleteItem from "components/DeleteItem";
 import Navbar from "components/navbar";
 import NotPermitted from "components/NotPermitted";
 import SearchWidget from "components/widgets/Search";
+import Loading from "components/Loading";
+import NoDataFound from "components/widgets/NoDataFound";
+import MedicationFilter from "components/MedicationFilter";
+import { useLocation } from "react-router-dom";
 
 const ManageMedicationPage = () => {
+  const [showFilters,setShowFilters]=useState(false);
+  const [filteredMedications,setFilteredMedications]=useState(false);
   const token = useSelector((state) => state.auth.token);
   const selectedPharmacy=useSelector((state)=>state.auth.pharmacy);
   const role= useSelector((state) => state.auth.role);
   const isLargeScreen= useMediaQuery("(min-width:900px)");
   console.log('role in manage medication page:',role)
   const [medications, setMedications] = useState([]);
+  const [sortedMedications, setSortedMedications] = useState([]);
   const [sortBy, setSortBy] = useState('nameAsc');
   const [deleteItemId,setDeleteItemId]=useState(null)
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isPermitted=role==='pharmacist'||role==='admin';
+  const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
+
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
@@ -45,9 +55,14 @@ const ManageMedicationPage = () => {
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const inStockOutcome = searchParams.get('inStock');
+  console.log("in stock: ",inStockOutcome);
+
 
   const fetchMedications = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       let apiUrl;
       let pharmacyId;
@@ -68,7 +83,17 @@ const ManageMedicationPage = () => {
       });
       if (response.ok) {
         const medicationsData = await response.json();
-        setMedications(medicationsData);
+        let medicationsFilterData;
+        if(inStockOutcome==='false')
+        {
+          medicationsFilterData = medicationsData.filter(medication => medication.inStock === false);
+          setMedications(medicationsFilterData);
+        }
+        else
+        {
+          setMedications(medicationsData);
+        }
+     
       } else {
         console.log("Failed to fetch medications");
       }
@@ -76,7 +101,7 @@ const ManageMedicationPage = () => {
       console.error("Error fetching medications:", error);
     }
     finally {
-      setLoading(false); // Set loading to false when data fetching is completed
+      setIsLoading(false); // Set loading to false when data fetching is completed
     }
   };
 
@@ -107,11 +132,65 @@ const ManageMedicationPage = () => {
       console.log(deleteItemId);
      
     }
-    const searchMedications = medications.filter(medication => {
-      return medication.name.toLowerCase().includes(searchQuery.toLowerCase());
-    });
 
-  const sortedMedications = searchMedications.slice().sort((a, b) => {
+    useEffect(() => {
+  
+      let searchMedications;
+      let sortedMeds;
+
+     searchMedications = medications.filter(medication => {
+        return medication.name.toLowerCase().includes(searchQuery.toLowerCase());
+      });
+      
+      if(filteredMedications)
+      {
+        const searchMedications = medications.filter(medication => {
+          return medication.name.toLowerCase().includes(searchQuery.toLowerCase());
+        });
+
+        sortedMeds = searchMedications.slice().sort((a, b) => {
+          switch (sortBy) {
+            case 'priceHigh':
+                return b.price - a.price;
+              case 'priceLow':
+                return a.price - b.price;
+            case 'nameAsc': 
+              return a.name.localeCompare(b.name);
+            case 'nameDesc':
+              return b.name.localeCompare(a.name);
+            default:
+              return 0;
+          }
+        });
+      }
+      else{
+
+        sortedMeds = searchMedications.slice().sort((a, b) => {
+          switch (sortBy) {
+            case 'priceHigh':
+                return b.price - a.price;
+              case 'priceLow':
+                return a.price - b.price;
+            case 'nameAsc': 
+              return a.name.localeCompare(b.name);
+            case 'nameDesc':
+              return b.name.localeCompare(a.name);
+            default:
+              return 0;
+          }
+        });
+      }
+    
+      // Update sortedMedications state
+      setSortedMedications(sortedMeds);
+    }, [medications,searchQuery, sortBy]);
+
+
+    /*const searchMedications = medications.filter(medication => {
+      return medication.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });*/
+
+  /*const sortedMedications = searchMedications.slice().sort((a, b) => {
     switch (sortBy) {
       case 'priceHigh':
           return b.price - a.price;
@@ -124,22 +203,47 @@ const ManageMedicationPage = () => {
       default:
         return 0;
     }
-  });
+  });*/
+  const applyFilter = (filter) => {
+    let filteredMedications = medications.slice(); // Create a shallow copy of medications
+  
+    // Apply availability filter
+    if (filter.availability) {
+      const { instock, outofstock } = filter.availability;
+      if (!instock) {
+        filteredMedications = filteredMedications.filter((medication) => !medication.inStock);
+      }
+      if (!outofstock) {
+        filteredMedications = filteredMedications.filter((medication) => medication.inStock);
+      }
+    }
+  
+    // Apply pharmacy filter
+    if (filter.pharmacy) {
+      filteredMedications = filteredMedications.filter((medication) => medication.pharmacy === filter.pharmacy);
+    }
+  
+    // Update state with filtered medications
+    setSortedMedications(filteredMedications);
+    setFilteredMedications(true);
+  };
+  
 
+  
+
+  if(isLoading)
+  {
+    return <Loading/>
+  }
 
 
   return (
     <>
      {isPermitted?(
       <>
- {loading?(
- <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
- <CircularProgress />
- <Typography variant='h4' color='primary' sx={{px:2}}>Loading...</Typography>
-</Box>
-    ):(
+ 
       <Box sx={{textAlign:'center'}}>
-      <Typography variant={isNonMobile?'h1':'h2'} sx={{mt:isNonMobile?5:2}}>Manage Medication</Typography>
+      <Typography variant={isNonMobile?'h1':'h3'} sx={{mt:isNonMobile?5:2}}>Manage Medication</Typography>
       <SearchWidget searchQuery={searchQuery} setSearchQuery={setSearchQuery} isNonMobile={isNonMobile}/>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
       {
@@ -168,6 +272,7 @@ const ManageMedicationPage = () => {
 )}
     
     </Box>
+ 
     <Card sx={{alignItems:'left',justifyContent:'left',backgroundColor:alt, width:isNonMobile?'30%':'60%',display:'flex',px:'3rem',py:0.8}}>
     <FormControl variant="outlined" sx={{width:'full'}}>
           <Select
@@ -181,14 +286,45 @@ const ManageMedicationPage = () => {
             <MenuItem value="priceLow">Price (Low to High)</MenuItem>
           </Select>
         </FormControl>
-    </Card>{medications.length === 0 && (
-          <Typography variant="h4">No medications found...</Typography>
+    </Card>
+
+    <Box sx={{width:'40%',justifyContent:'left',display:'flex',flexDirection:'column'}}>
+  <Button
+  sx={{
+    position:"relative",
+    width: isNonMobile?'40%':'70%',
+    bgcolor: 'primary.main',
+    px:2,
+    py:1,
+    mx:'1rem',
+    ml:'-0.8rem',
+    color: alt, // Set the text color to white
+    '&:hover': {
+      bgcolor: 'primary.dark', // Darken the background color on hover
+    },
+  }}
+  onClick={() => setShowFilters(prevState => !prevState)}
+  variant="contained" // Use the contained variant for a colored button
+>
+  Filter
+</Button>
+{showFilters&&(
+ <Card sx={{zIndex:9999, alignItems:'left',justifyContent:'left',backgroundColor:alt, width:isLargeScreen?'70%':isMediumScreen?'80%':'60%',minHeight:!isNonMobile&&'4rem', display:'flex',flexDirection:'column',px:isNonMobile?'3rem':'1rem',py:isNonMobile?0.8:1}}>
+ {/* Sort by dropdown */}
+ <MedicationFilter handleFilter={applyFilter} />
+
+</Card>
+)}
+</Box>
+
+    {sortedMedications.length === 0 && (
+          <NoDataFound name="Medication" icon='CgPill'/>
         )}
       
     
       {/* Render medications */}
       {sortedMedications.map((medication) => (
-        <Card key={medication._id} sx={{backgroundColor:alt,my:2,px:4,py:6,textAlign:'left'}}>
+        <Card key={medication._id} sx={{backgroundColor:alt,my:isNonMobile?2:3,px:4,py:isNonMobile?6:3,textAlign:'left'}}>
           <Grid container spacing={2}>
           <Grid item xs={6}>
           {/* Display medication details */}
@@ -201,7 +337,9 @@ const ManageMedicationPage = () => {
             src={`http://localhost:3001/assets/${medication.picture}`}
           />
             </Grid>
-          <Typography color='primary' fontWeight='500' variant='h3' sx={{pb:2}}>{medication.name}</Typography>
+            <Link to={`/view/medication/${medication._id}` } style={{textDecoration:'none'}}>
+            <Typography color='primary' fontWeight='500' variant={isNonMobile?'h3':'h4'} sx={{pb:2}}>{medication.name}</Typography>
+            </Link>
           <Typography variant='body1'  sx={{py:0.4}} >Quantity: {medication.quantity}</Typography>
           <Typography variant='body1'  sx={{py:0.4}} >Price: {medication.price}</Typography>
           <Typography variant='body1'  sx={{py:0.4}} >Category: {medication.category}</Typography>
@@ -230,8 +368,7 @@ const ManageMedicationPage = () => {
         deleteItemId={deleteItemId}
     />
     </Box>
-    )}
-  
+   
       </>
      ):(
       <Box sx={{justifyContent:'center',alignItems:'center',textAlign:'center'}}>

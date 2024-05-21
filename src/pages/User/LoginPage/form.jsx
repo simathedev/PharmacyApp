@@ -16,7 +16,8 @@ import { setLogin,setPharmacy } from "state";
 import {addToCart} from "cartState";
 import Dropzone from "react-dropzone";
 import { toast } from 'react-toastify';
-
+import LoadingComponent from "components/LoadingComponent/index";
+import ProgressLoadWidget from "components/widgets/ProgressLoadWidget";
 
 
 const loginSchema = yup.object().shape({
@@ -30,6 +31,7 @@ const initialValuesLogin = {
 };
 
 const Form = () => {
+  const [isLoading,setIsLoading]=useState(false);
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -56,6 +58,7 @@ const Form = () => {
       const loggedIn = await loggedInResponse.json();
       onSubmitProps.resetForm();
       if (loggedIn) {
+        setIsLoading(false);
         if (loggedIn.msg) {
           console.log("error:", loggedIn.msg);
           toast.error(`Email Or Password Incorrect`, {
@@ -66,9 +69,10 @@ const Form = () => {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
           });
         } else {
+
           console.log('logged in:',loggedIn)
           console.log('user type in successful response:',userType)
           toast.success('Successfully Logged In', { 
@@ -78,7 +82,7 @@ const Form = () => {
             pauseOnHover: true,
             draggable: true,
             progress: undefined,
-            theme: "light",
+            theme: "colored",
           });
           if (userType === "user") {
             console.log('the userType is user')
@@ -109,6 +113,7 @@ const Form = () => {
           }
           else if (userType==="admin")
           {
+            
             console.log("loggedIn details Admin: ",loggedIn)
             console.log('the userType is admin')
             dispatch(
@@ -120,11 +125,13 @@ const Form = () => {
       
             );
           }
+        
           navigate(`/${userType}`);
         }
        
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Error logging in:", error);
       toast.error("Network Error. Please Try Again Later.", {
         position: "top-right",
@@ -134,15 +141,21 @@ const Form = () => {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light",
+        theme: "colored",
       });
     }
   };
   
 
   const handleFormSubmit = async (values, onSubmitProps) => {
-  await login(values, onSubmitProps);
+    setIsLoading(true);
+    await login(values, onSubmitProps);
   };
+
+  if (isLoading)
+  {
+    return <ProgressLoadWidget name='please wait ' text='logging in, '/>
+  }
 
   return (
     <Formik

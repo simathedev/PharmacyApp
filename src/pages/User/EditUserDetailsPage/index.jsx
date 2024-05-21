@@ -11,7 +11,7 @@ const EditUserDetailsPage=()=>{
     const isNonMobileScreens= useMediaQuery("(min-width:600px)");
     const role= useSelector((state) => state.auth.role);
     return (
-    <Box>
+    <Box sx={{minHeight:'100vh'}}>
       <Box sx={{ml:3}}>
         <Link to='/view/account' >
         <BackButton/>

@@ -16,6 +16,7 @@ import AdminPharmacy from '../../../components/AdminPharmacy';
 const Index = () => {
   const user = useSelector((state) => state.auth.user);
   const role=useSelector((state)=>state.auth.role);
+  const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
@@ -52,12 +53,11 @@ const Index = () => {
     <Box
       display="flex"
       justifyContent="center"
-      alignItems="center"
-     //minHeight="70vh" // Ensure full viewport height
+     minHeight="100vh" // Ensure full viewport height
     >
 
       <Box width={isSmallScreen ? '70%' : '60%'} display="flex" flexDirection="column">
-        <Typography variant="h2" color={palette.primary.main} fontWeight="500" textAlign="center" mb={4} mt={10}>
+        <Typography variant={isNonMobile?"h2":"h3"} color={palette.primary.main} fontWeight="500" textAlign="center" mb={4} mt={isNonMobile? 10:6}>
           Welcome, Admin
         </Typography>
        

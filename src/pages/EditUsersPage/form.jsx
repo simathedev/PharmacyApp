@@ -10,12 +10,15 @@ import {
   FormControlLabel,
   Checkbox,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Card
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+import Loading from 'components/Loading';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
 
 const Form = () => {
   const navigate = useNavigate();
@@ -48,12 +51,15 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
   const [showBasicInfoFields, setShowBasicInfoFields] = useState(false);
   const [showAddressFields, setShowAddressFields] = useState(false);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
+  const [isLoading, setIsLoading]=useState(true);
+  const [isSaving,setIsSaving]=useState(false);
   const token = useSelector((state) => state.auth.token);
   const { palette } = useTheme();
   useEffect(() => {
 
     const fetchUser = async () => {
       try {
+        setIsLoading(true);
         const response = await fetch(`http://localhost:3001/user/getUser/${id}`, {
           method: 'GET',
           headers: {
@@ -133,6 +139,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
           setValidationSchema(yup.object());
       }
     }
+    setIsLoading(false);
   }
   useEffect(() => {
     setInitialValuesAndValidationSchema(showBasicInfoFields, showAddressFields, showPasswordFields,user);
@@ -169,6 +176,7 @@ const handlePasswordClick = () => {
         body: JSON.stringify(values),
       });
       if (userResponse.ok) {
+        setIsSaving(false);
         onSubmitProps.resetForm();
         navigate("/manage/users");
         toast.success('User Successfully Updated.', { 
@@ -183,6 +191,7 @@ const handlePasswordClick = () => {
         });
 
       } else {
+        setIsSaving(false);
         console.log('Failed to submit the user form');
         toast.error('User Update Unsuccessful', {
           position: "top-right",
@@ -196,6 +205,7 @@ const handlePasswordClick = () => {
           });
       }
     } catch (error) {
+      setIsSaving(false);
       console.error('Error in user function:', error);
       toast.error('User Update Unsuccessful', {
         position: "top-right",
@@ -221,7 +231,7 @@ const handlePasswordClick = () => {
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
-  
+      setIsSaving(true);
       console.log('Submitting update user:', values);
       if(showAddressFields)
       {
@@ -231,7 +241,7 @@ const handlePasswordClick = () => {
       }
       else
     {
-      //console.log("user in handle submit: ",values)
+      ///console.log("user in handle submit: ",values)
       await updateUser(values, onSubmitProps);
     }
      
@@ -239,6 +249,14 @@ const handlePasswordClick = () => {
       console.error('Error submitting form:', error);
     }
   };
+
+
+    
+
+  if(isLoading)
+  {
+    return <Loading/>
+  }
 
   return (
     <Formik
@@ -260,12 +278,28 @@ const handlePasswordClick = () => {
         <Box 
         display="grid"
         gap="30px"
+        position="relative"
         gridTemplateColumns="repeat(4, minmax(0, 1fr))"
         sx={{
           "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
         }}
         >
-           <Button 
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='User' text='Updating'/>
+
+        </Card>
+        )}
+
+           {/*<Button 
               onClick={handleBasicInfoClick}
               sx={{ gridColumn: "span 4" }}
             >
@@ -284,7 +318,50 @@ const handlePasswordClick = () => {
               sx={{ gridColumn: "span 4" }}
             >
               {showPasswordFields ? "Hide Password" : "Edit Password"}
+      </Button>
+      <Button
+              onClick={handleButtonClick('basicInfo')}
+              sx={{ gridColumn: "span 4" }}
+            >
+              {showBasicInfoFields ? "Hide Basic Info" : "Edit Basic Info"}
             </Button>
+
+            <Button
+              onClick={handleButtonClick('address')}
+              sx={{ gridColumn: "span 4" }}
+            >
+              {showAddressFields ? "Hide Address" : "Edit Address"}
+            </Button>
+
+            <Button
+              onClick={handleButtonClick('password')}
+              sx={{ gridColumn: "span 4" }}
+            >
+              {showPasswordFields ? "Hide Password" : "Edit Password"}
+            </Button>*/}
+
+            
+<Button
+        onClick={handleBasicInfoClick}
+        sx={{ gridColumn: 'span 4' }}
+      >
+        {showBasicInfoFields ? 'Hide Basic Info' : 'Edit Basic Info'}
+      </Button>
+
+      <Button
+        onClick={handleAddressClick}
+        sx={{ gridColumn: 'span 4', display: showBasicInfoFields ? 'none' : 'block' }}
+      >
+        {showAddressFields ? 'Hide Address' : 'Edit Address'}
+      </Button>
+
+      <Button
+        onClick={handlePasswordClick}
+        sx={{ gridColumn: 'span 4', display: showBasicInfoFields ? 'none' : 'block' }}
+      >
+        {showPasswordFields ? 'Hide Password' : 'Edit Password'}
+      </Button>
+
 
          {showBasicInfoFields&&(
           <>

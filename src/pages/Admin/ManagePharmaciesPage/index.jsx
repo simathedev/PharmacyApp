@@ -22,6 +22,8 @@ import DeleteItem from "components/DeleteItem";
 import Navbar from "components/navbar";
 import NotPermitted from "components/NotPermitted";
 import SearchWidget from "components/widgets/Search";
+import Loading from "components/Loading";
+import NoDataFound from "components/widgets/NoDataFound";
 
 const Index = () => {
   const token = useSelector((state) => state.auth.token);
@@ -31,7 +33,8 @@ const Index = () => {
   const [deleteItemId,setDeleteItemId]=useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const isPermitted=role==='pharmacist'||role==='admin';
 
   const theme = useTheme();
@@ -44,7 +47,7 @@ const Index = () => {
 
 
   const fetchPharmacies = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await fetch("http://localhost:3001/pharmacy/getPharmacies", {
         method: "GET",
@@ -65,7 +68,7 @@ const Index = () => {
       console.error("Error fetching pharmacies:", error);
     }
     finally {
-      setLoading(false); // Set loading to false when data fetching is completed
+      setIsLoading(false); // Set loading to false when data fetching is completed
     }
   };
 
@@ -112,19 +115,19 @@ const Index = () => {
     }
   });
 
+  if(isLoading)
+  {
+    return <Loading/>
+  }
+
   return (
     <>
      {isPermitted?(
       <>
- {loading?(
- <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
- <CircularProgress />
- <Typography variant='h4' color='primary' sx={{px:2}}>Loading...</Typography>
-</Box>
-    ):(
+ 
     <Box sx={{textAlign:'center'}}>
       {/* Render pharmacies */}
-      <Typography variant={isNonMobile?'h1':'h2'} sx={{mt:isNonMobile?5:2}}>Manage Pharmacies</Typography>
+      <Typography variant={isNonMobile?'h1':'h3'} sx={{mt:isNonMobile?5:2}}>Manage Pharmacies</Typography>
       <SearchWidget searchQuery={searchQuery} setSearchQuery={setSearchQuery} isNonMobile={isNonMobile}/>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
       <Link to={'/Admin'}>
@@ -152,11 +155,11 @@ const Index = () => {
       </Card>
 
       {pharmacies.length === 0 && (
-          <Typography variant="h4">No Pharmacies found...</Typography>
+          <NoDataFound name="Pharmacies" icon='MdLocalPharmacy'/>
         )}
 
       {sortedPharmacies.map((pharmacy) => (
-        <Card key={pharmacy._id} sx={{backgroundColor:alt,my:2,px:4,py:6,textAlign:'left'}}>
+        <Card key={pharmacy._id} sx={{backgroundColor:alt,my:isNonMobile?2:3,px:4,py:isNonMobile?6:3,textAlign:'left'}}>
           {/* Display pharmacy details */}
           <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -169,13 +172,15 @@ const Index = () => {
             src={`http://localhost:3001/assets/${pharmacy.picture}`}
           />
             </Grid>
-          <Typography variant='h3' color='primary' fontWeight='500' sx={{pb:2}}>{pharmacy.name}</Typography>
+            <Link to={`/view/pharmacy/${pharmacy?._id}`} style={{textDecoration:'none'}}>
+            <Typography variant={isNonMobile?'h3':'h4'} color='primary' fontWeight='500' sx={{pb:2}}>{pharmacy.name}</Typography>
+            </Link>
           <Typography variant='body1'  sx={{py:0.4}}>Email Address: {pharmacy.email}</Typography>
           <Typography variant='body1'  sx={{py:0.4}}>Contact Number: {pharmacy.phoneNumber}</Typography>
           <Typography variant='body1'  sx={{py:0.4}}>Operating Hours: {pharmacy.openTime} - {pharmacy.closeTime}</Typography>
           </Grid>
        
-          <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:2}}>
+          <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:isNonMobile?2:1}}>
           <Link to={`/Edit/Pharmacy/${pharmacy._id}`}>
           <EditButton/>
           </Link>
@@ -192,7 +197,7 @@ const Index = () => {
         deleteItemId={deleteItemId}
     />
     </Box>
-    )}
+ 
       </>
      ):(
       <Box sx={{justifyContent:'center',alignItems:'center',textAlign:'center'}}>

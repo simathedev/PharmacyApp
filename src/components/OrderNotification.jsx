@@ -109,17 +109,19 @@ const OrderNotification = () => {
   }
 
   if (orders.length === 0) {
-    return <Typography>No orders found.</Typography>; // Display message when no orders are found
+    return <Typography fontStyle='italic'>No orders found.</Typography>; // Display message when no orders are found
   }
 
   return (
     <Box sx={{ borderRadius: '2%', padding: '2px 4px', width: '100%' }}>
-      <Typography>Order Notification</Typography>
+      {/*<Typography>Order Notification</Typography>*/}
       {orders?.slice(0, 2).map((order) => (
-        <Card key={order._id} sx={{ backgroundColor:alt,my: 2, px: isNonMobile ? 3 : 5, py: 1, textAlign: 'left' }}>
+        <Card key={order._id} sx={{ backgroundColor:alt, my: 2, px: isNonMobile ? 3 : 5, py: 1, textAlign: 'left' }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
+              <Link to={`/view/order/${order._id}`} style={{textDecoration:'none'}}>
               <Typography variant='body1' fontWeight='500' color='primary' sx={{ py: 1 }}>Order ID: {order._id}</Typography>
+              </Link>
               <Typography variant='body1' sx={{ pb: 0.4 }}>Customer: {order.user?.firstName} {order.user?.lastName}</Typography>
               <Typography variant='body1' sx={{ py: 0.4 }}>Delivery Type: {order.deliveryType}</Typography>
               <Typography variant='body1' sx={{ py: 0.4 }}>Order Status: {order.orderStatus}</Typography>
@@ -131,7 +133,7 @@ const OrderNotification = () => {
           </Grid>
         </Card>
       ))}
-      <Link to="/manage/orders">
+      <Link to={`/manage/orders?orderStatus=${encodeURIComponent('pending')}`} style={{ textDecoration: 'none' }}>
         <Button>View More</Button>
       </Link>
     </Box>

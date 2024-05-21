@@ -27,6 +27,7 @@ import { toast } from 'react-toastify';
 import FilterComponent from "components/Filter";
 import NoProductsFound from "components/widgets/NoProductsFound";
 import { FaFilter } from "react-icons/fa";
+import Loading from "components/Loading";
 
 const MedicationPage = () => {
     const token = useSelector((state) => state.auth.token);
@@ -40,7 +41,7 @@ const MedicationPage = () => {
     const [sortedMedications,setSortedMedications]=useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('nameAsc');
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const category = searchParams.get('category');
@@ -58,7 +59,7 @@ const MedicationPage = () => {
 
     console.log('Category from search:', category);
     useEffect(() => {
-      setLoading(true);
+      setIsLoading(true);
       const fetchMedications = async () => {
         try {
           let apiUrl;
@@ -100,7 +101,7 @@ const MedicationPage = () => {
           console.error("Error fetching medications:", error);
         }
            finally {
-      setLoading(false); // Set loading to false when data fetching is completed
+      setIsLoading(false); // Set isLoading to false when data fetching is completed
     }
       };
   
@@ -109,7 +110,7 @@ const MedicationPage = () => {
 
 
     useEffect(() => {
-      // Filter medications based on search query
+  
       let searchMedications;
       let sortedMeds;
        searchMedications = medications.filter(medication => {
@@ -222,17 +223,20 @@ const MedicationPage = () => {
       }
       return name; // Return original name if it's within the maximum length
     };
-
+if(isLoading)
+{
+  return <Loading/>
+}
 
     return (
       <Box sx={{minHeight:'100vh'}}>
 <CartNavbar/>
-{loading?(
- <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+
+ {/*<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
  <CircularProgress />
  <Typography variant='h4' color='primary' sx={{px:2}}>Loading...</Typography>
-</Box>
-    ):(
+    </Box>*/}
+
       <Box sx={{ textAlign: 'center', mt: 2, display:'flex',flexDirection:'column'}}>
       <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2}}>
       <Link to={'/User'}>
@@ -337,7 +341,7 @@ isNonMobile?
                 />
                 {/* Display medication details */}
                 <Box sx={{display:'flex',flexDirection:'column' }}>
-                <Link to={`/medication/details/${medication._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/medication/details/${medication._id}`} style={{ textDecoration: 'none', display:'flex', flexDirection:'column', color: 'inherit' }}>
                   <Typography variant={isNonMobile ? "h5" : "h6"}>{renderMedicationName(medication.name)}</Typography>
                 <Typography variant={isNonMobile?'h6':"h7"}>R {medication.price}</Typography>
                 <Typography variant={isNonMobile?"h6":"h7"}>{medication.inStock ? 'in stock' : 'out of stock'}</Typography>
@@ -365,7 +369,7 @@ isNonMobile?
        
         
       </Box>
-    )}
+
       </Box>
     );
   };

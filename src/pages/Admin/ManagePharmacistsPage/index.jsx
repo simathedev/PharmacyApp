@@ -11,6 +11,8 @@ import { FaUserDoctor } from "react-icons/fa6";
 import Navbar from "components/navbar";
 import NotPermitted from "components/NotPermitted";
 import SearchWidget from "components/widgets/Search";
+import Loading from "components/Loading";
+import NoDataFound from "components/widgets/NoDataFound";
 
 const Index = () => {
   const token = useSelector((state) => state.auth.token);
@@ -20,7 +22,8 @@ const Index = () => {
   const [deleteItemId,setDeleteItemId]=useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [loading, setLoading] = useState(true);
+  //const [loading, setLoading] = useState(true);
+  const [isLoading,setIsLoading]=useState(true);
   const isPermitted=role==='pharmacist'||role==='admin';
   
   const theme = useTheme();
@@ -33,7 +36,7 @@ const Index = () => {
 
 
   const fetchPharmacists = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await fetch("http://localhost:3001/pharmacist/getPharmacists", {
         method: "GET",
@@ -53,7 +56,7 @@ const Index = () => {
       console.error("Error fetching pharmacists:", error);
     }
     finally {
-      setLoading(false); // Set loading to false when data fetching is completed
+      setIsLoading(false); // Set loading to false when data fetching is completed
     }
   };
 
@@ -108,18 +111,18 @@ const Index = () => {
     }
   });
 
+if(isLoading)
+{
+  return <Loading/>
+}
+
   return (
     <>
        {isPermitted?(
         <>
- {loading?(
- <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
- <CircularProgress />
- <Typography variant='h4' color='primary' sx={{px:2}}>Loading...</Typography>
-</Box>
-    ):(
+
     <Box sx={{textAlign:'center'}}>
-      <Typography variant={isNonMobile?'h1':'h2'} sx={{mt:isNonMobile?5:2}}>Manage Pharmacists</Typography>
+      <Typography variant={isNonMobile?'h1':'h3'} sx={{mt:isNonMobile?5:2}}>Manage Pharmacists</Typography>
       <SearchWidget searchQuery={searchQuery} setSearchQuery={setSearchQuery} isNonMobile={isNonMobile}/>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
       <Link to={'/Admin'}>
@@ -145,13 +148,14 @@ const Index = () => {
       </Card>
 
       {pharmacists.length === 0 && (
-          <Typography variant="h4">No Pharmacists found...</Typography>
+          <NoDataFound name='Pharmacists' icon='FaUserDoctor'/>
+
         )}
 
       {/* Render pharmacists */}
       {sortedPharmacists.map((pharmacist) => (
         
-        <Card key={pharmacist._id} sx={{backgroundColor:alt,my:2,pl:4,py:5,textAlign:'left'}}>
+        <Card key={pharmacist._id} sx={{backgroundColor:alt,my:isNonMobile?2:3,pl:4,py:isNonMobile?5:3,textAlign:'left'}}>
           {/* Display pharmacist details */}
           <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -167,7 +171,9 @@ const Index = () => {
          }
             </Grid>
           <Grid item xs={12} sm={6}>
-          <Typography variant='h3' fontWeight='500' color='primary' sx={{py:2}}>{pharmacist.firstName} {pharmacist.lastName}</Typography>
+            <Link to={`/view/pharmacist/${pharmacist?._id}`} style={{textDecoration:'none'}}>
+            <Typography variant={isNonMobile?'h3':'h4'}  fontWeight='500' color='primary' sx={{py:2}}>{pharmacist.firstName} {pharmacist.lastName}</Typography>
+            </Link>
           <Typography variant='body1' sx={{py:0.4}}>Pharmacy:{pharmacist.pharmacy.name}</Typography>
           <Typography variant='body1' sx={{py:0.4}}>StreetAddress:{pharmacist.pharmacy.streetAddress}</Typography>
           <Typography variant='body1' sx={{py:0.4}}>Contact Number:{pharmacist.pharmacy.phoneNumber}</Typography>
@@ -192,7 +198,7 @@ const Index = () => {
         deleteItemId={deleteItemId}
     />
     </Box>
-    )}
+ 
         </>
        ):(
         <Box sx={{justifyContent:'center',alignItems:'center',textAlign:'center'}}>

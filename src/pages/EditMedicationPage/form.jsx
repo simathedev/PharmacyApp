@@ -12,6 +12,7 @@ import {
   useTheme,
   MenuItem,
   useMediaQuery,
+  Card
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
@@ -19,6 +20,8 @@ import Dropzone from 'react-dropzone';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import FlexBetween from "components/FlexBetween";
 import { useNavigate, useParams } from "react-router-dom";
+import Loading from 'components/Loading';
+import ProgressLoadWidget from 'components/widgets/ProgressLoadWidget';
 
 const Form = () => {
 
@@ -47,7 +50,8 @@ const Form = () => {
   const [showPictureFields, setShowPictureFields] = useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [validationSchema, setValidationSchema] = useState(yup.object());
-
+  const [isSaving,setIsSaving]=useState(false);
+  const [isLoading,setIsLoading]=useState(true);
   const token = useSelector((state) => state.auth.token);
   const { palette } = useTheme();
   const { id } = useParams();
@@ -65,6 +69,7 @@ const Form = () => {
         },
       });
       if (response.ok) {
+        
         const usersData = await response.json();
         setUsers(usersData.map((user) => ({ id: user._id, firstName: user.firstName })));
       } else {
@@ -85,7 +90,7 @@ const Form = () => {
       });
       if (response.ok) {
         const medicationData = await response.json();
-        setMedications(medicationData.map((user) => ({ id: user._id, name: user.name })));
+        setMedications(medicationData);
       } else {
         console.log('Failed to fetch users');
       }
@@ -151,9 +156,9 @@ const Form = () => {
         quantity: medicationData.quantity || '',
         price: medicationData.price || '',
         category: medicationData.category || '',
-        pharmacy: medicationData.pharmacy || '',
+        pharmacy: medicationData.pharmacy._id || '',
         picture: medicationData.picture || '',
-        inStock: medicationData.inStock || '',
+        inStock: medicationData.inStock || false,
       });
       //setValidationSchema(validationSchemaBasicInfo);
     }
@@ -165,7 +170,7 @@ const Form = () => {
           quantity: medicationData.quantity || '',
           price: medicationData.price || '',
           category: medicationData.category || '',
-          pharmacy: medicationData.pharmacy || '',
+          pharmacy: medicationData.pharmacy._id || '',
         })
         setValidationSchema(medicationInfoSchema);
         break;
@@ -177,7 +182,7 @@ const Form = () => {
         break;
       case showInStockFields:
         setInitialValues({
-          inStock: medicationData.inStock || '',
+          inStock: medicationData.inStock ||false,
         })
         setValidationSchema(medicationInStockSchema);
         break;
@@ -185,6 +190,7 @@ const Form = () => {
         setValidationSchema(yup.object());
   }
 }
+setIsLoading(false);
   }
 
   useEffect(() => {
@@ -231,6 +237,7 @@ const Form = () => {
         body: JSON.stringify(values),
       });
       if (medicationResponse.ok) {
+        setIsSaving(false);
         onSubmitProps.resetForm();
         navigate("/manage/medications");
         toast.success('Medication Successfully Updated.', { 
@@ -245,6 +252,7 @@ const Form = () => {
           // Other options for customizing the notification
         });
       } else {
+        setIsSaving(false);
         console.log('Failed to submit the medication form');
         toast.error('Medication Update Unsuccessful', {
           position: "top-right",
@@ -258,6 +266,7 @@ const Form = () => {
           });
       }
     } catch (error) {
+      setIsSaving(false);
       console.error('Error in medication function:', error);
       toast.error('medication Update Unsuccessful', {
         position: "top-right",
@@ -276,32 +285,26 @@ const Form = () => {
 
   const handleSubmit = async (values, onSubmitProps) => {
     try {
-      let dataToSend;
+      setIsSaving(true);
+      let dataToSend = { ...values };
       let inStock;
-      //when values.inStock is off it should change to out of stock
-      //I should create additional buttons instead of just making
-    //use of a checkbox
-      if(showInStockFields){
-inStock = values.inStock && values.inStock[0] === 'on';
-dataToSend = {
-  ...values,
-  inStock,
-};
-      }
-      else{
-        dataToSend=values;
-      }
-      
+      if (showInStockFields) {
+        dataToSend.inStock = values.inStock;
+    }
+    else {
+      dataToSend = values;
+    }
       console.log('Submitting medication:', dataToSend);
-
-      // Perform the submission logic here
      await updateMedication(dataToSend, onSubmitProps);
-      //console.log('Submitting medication:', values);
-      //await medication(values, onSubmitProps);
+      
     } catch (error) {
       console.error('Error submitting form:', error);
     }
   };
+if(isLoading)
+{
+return <Loading/>
+}
 
   return (
     <Formik
@@ -323,6 +326,7 @@ dataToSend = {
           <Box
             display="grid"
             gap="30px"
+            position="relative"
             gridTemplateColumns="repeat(4, minmax(0, 1fr))"
             sx={{
               "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
@@ -330,7 +334,22 @@ dataToSend = {
           // display="flex" flexDirection="column" alignItems="center"
           >
 
-            <Button
+{isSaving&&(
+           <Card
+           sx={{width:isNonMobile?'60%':'90%', 
+position: 'absolute',
+top: '50%',
+left: '50%',
+transform: 'translate(-50%, -50%)',
+zIndex:9999,
+borderRadius:4,
+        }}>
+          <ProgressLoadWidget name='Medication' text='Updating'/>
+
+        </Card>
+        )}  
+
+           {/* <Button
               onClick={handleMedicationClick}
               sx={{ gridColumn: "span 4" }}
             >
@@ -348,7 +367,28 @@ dataToSend = {
               sx={{ gridColumn: "span 4" }}
             >
               {showPictureFields ? "Hide Picture" : "Edit Picture"}
-            </Button>
+      </Button>*/}
+
+            <Button
+        onClick={handleMedicationClick}
+        sx={{ display: showInStockFields || showPictureFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showMedicationInfoFields ? 'Hide Medication Info' : 'Edit Medication Info'}
+      </Button>
+
+      <Button
+        onClick={handleInStockClick}
+        sx={{ display: showMedicationInfoFields || showPictureFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showInStockFields ? 'Hide In Stock' : 'Edit In Stock'}
+      </Button>
+
+      <Button
+        onClick={handlePictureClick}
+        sx={{ display: showMedicationInfoFields || showInStockFields ? 'none' : 'block', gridColumn: 'span 4' }}
+      >
+        {showPictureFields ? 'Hide Picture' : 'Edit Picture'}
+      </Button>
 
             {showMedicationInfoFields && (
               <>
@@ -389,29 +429,34 @@ dataToSend = {
                   variant="outlined"
                   sx={{ gridColumn: "span 2" }}
                 />
-                 <TextField
-              label="Pharmacy"
-              name="pharmacy"
-              select
-              SelectProps={{
-                native: true,
+                <Autocomplete
+              options={pharmacies}
+              getOptionLabel={(option) => option.name}
+              value={pharmacies.find((pharmacy) => pharmacy._id === values.pharmacy) || null}
+              onChange={(event, newValue) => {
+                handleChange({
+                  target: {
+                    name: 'pharmacy',
+                    value: newValue ? newValue._id : '',
+                  },
+                });
+               // (newValue ? newValue._id : '')
               }}
-              value={values.pharmacy}
-              onChange={handleChange}
               onBlur={handleBlur}
-              error={touched.pharmacy && Boolean(errors.pharmacy)}
-              helperText={touched.pharmacy && errors.pharmacy}
-              margin="normal"
-              variant="outlined"
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Pharmacy"
+                  name="pharmacy"
+                  error={touched.pharmacy && Boolean(errors.pharmacy)}
+                  helperText={touched.pharmacy && errors.pharmacy}
+                  margin="normal"
+                  variant="outlined"
+                />
+              )}
               sx={{ gridColumn: "span 4" }}
-            >
-              <option value="">Select Pharmacy</option>
-              {pharmacies.map((pharmacy) => (
-                <option key={pharmacy._id} value={pharmacy._id}>
-                  {pharmacy.name}
-                </option>
-              ))}
-            </TextField>
+            />
+
                 <TextField
                   select
                   label="Category"
@@ -443,7 +488,7 @@ dataToSend = {
   control={
     <Checkbox
       checked={values.inStock}
-      onChange={handleChange}
+      onChange={(event) => setFieldValue("inStock", event.target.checked)}
       name="inStock"
       color="primary"
     />
@@ -451,7 +496,6 @@ dataToSend = {
   label="In Stock"
   sx={{ gridColumn: "span 4" }}
 />
-    
               </>
             )}
             {showPictureFields && (
