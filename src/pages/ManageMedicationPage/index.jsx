@@ -46,7 +46,11 @@ const ManageMedicationPage = () => {
   const isPermitted=role==='pharmacist'||role==='admin';
   const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
 
-
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+  
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -65,10 +69,7 @@ const ManageMedicationPage = () => {
     setIsLoading(true);
     try {
       let apiUrl;
-      let apiUrlSegment=process.env.NODE_ENV === 'production' ?
-      `https://pharmacy-app-api.vercel.app`
-      :
-      `http://localhost:3001`
+     
       let pharmacyId;
       pharmacyId = selectedPharmacy._id;
       console.log("pharmacy id: ",pharmacyId);
