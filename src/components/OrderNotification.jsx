@@ -19,16 +19,15 @@ const OrderNotification = () => {
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const fetchNewOrders = async () => {
     let pharmacyId;
     pharmacyId = selectedPharmacy._id;
     console.log("pharmacy id: ", pharmacyId);
-
-    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
-    `https://pharmacy-app-api.vercel.app`
-    :
-    `http://localhost:3001`
-    
     try {
       const response = await fetch(`${apiUrlSegment}/order/getNewOrders/${pharmacyId}`, {
         method: 'GET',
@@ -66,6 +65,7 @@ const OrderNotification = () => {
         },
         body: JSON.stringify({ orderStatus: status }),
       });
+
       const updatedOrder = await orderStatusResponse.json();
 
       if (updatedOrder) {
