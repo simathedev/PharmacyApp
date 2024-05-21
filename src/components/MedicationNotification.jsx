@@ -26,9 +26,15 @@ const MedicationNotification = () => {
       let pharmacyId;
       pharmacyId = selectedPharmacy._id;
       console.log("pharmacy id: ",pharmacyId);
+
+      let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+      `https://pharmacy-app-api.vercel.app`
+      :
+      `http://localhost:3001`
+
         try {
 
-          const response = await fetch(`http://localhost:3001/medication/getFinishedMedications/${pharmacyId}`, {
+          const response = await fetch(`${apiUrlSegment}/medication/getFinishedMedications/${pharmacyId}`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${token}`,

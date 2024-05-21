@@ -14,6 +14,11 @@ const ScriptNotification = () => {
   const token = useSelector((state) => state.auth.token);
   const selectedPharmacy = useSelector((state) => state.auth.pharmacy);
 
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
+
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
@@ -27,7 +32,7 @@ const ScriptNotification = () => {
     pharmacyId = selectedPharmacy._id;
     console.log("pharmacy id: ", pharmacyId);
     try {
-      const response = await fetch(`http://localhost:3001/prescription/getNewPrescriptions/${pharmacyId}`, {
+      const response = await fetch(`${apiUrlSegment}/prescription/getNewPrescriptions/${pharmacyId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -55,7 +60,7 @@ const ScriptNotification = () => {
 
   const updateApprovedScript = async (id) => {
     try {
-      const scriptApprovedResponse = await fetch(`http://localhost:3001/prescription/updatePrescription/${id}`, {
+      const scriptApprovedResponse = await fetch(`${apiUrlSegment}/prescription/updatePrescription/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

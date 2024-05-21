@@ -22,7 +22,7 @@ return(
             zIndex:99999,
             
             }}>
-            <GiMedicinePills fontSize='3rem' style={{ color: palette.primary.main }}/>
+          <GiMedicinePills fontSize='3rem' style={{ color: palette.primary.main }}/>
           <Typography
             variant="h5"
             padding="1rem"

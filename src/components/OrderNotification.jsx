@@ -23,8 +23,14 @@ const OrderNotification = () => {
     let pharmacyId;
     pharmacyId = selectedPharmacy._id;
     console.log("pharmacy id: ", pharmacyId);
+
+    let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+    `https://pharmacy-app-api.vercel.app`
+    :
+    `http://localhost:3001`
+    
     try {
-      const response = await fetch(`http://localhost:3001/order/getNewOrders/${pharmacyId}`, {
+      const response = await fetch(`${apiUrlSegment}/order/getNewOrders/${pharmacyId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,7 +58,7 @@ const OrderNotification = () => {
 
   const updateOrderStatus = async (id, status) => {
     try {
-      const orderStatusResponse = await fetch(`http://localhost:3001/order/updateOrder/${id}`, {
+      const orderStatusResponse = await fetch(`${apiUrlSegment}/order/updateOrder/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

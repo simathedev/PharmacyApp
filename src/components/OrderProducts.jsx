@@ -3,7 +3,10 @@ import { Box, Typography, useMediaQuery } from '@mui/material';
 
 const OrderProducts = ({ medications }) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-
+  let apiUrlSegment=process.env.NODE_ENV === 'production' ?
+  `https://pharmacy-app-api.vercel.app`
+  :
+  `http://localhost:3001`
   // Check if medications array exists before mapping over it
   if (!medications || medications.length === 0) {
     return (
@@ -20,7 +23,7 @@ const OrderProducts = ({ medications }) => {
             height={isNonMobile ? "70px" : "50px"}
             alt="medication"
             style={{ borderRadius: '10%' }}
-            src={`http://localhost:3001/assets/${medication.medication?.picture}`}
+            src={`${apiUrlSegment}/assets/${medication.medication?.picture}`}
           />
           <Box sx={{width:isNonMobile?'75%':'80%'}}>
           <Typography variant='body1' sx={{ fontSize: '12px' }}>
