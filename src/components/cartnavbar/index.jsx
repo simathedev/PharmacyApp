@@ -53,7 +53,7 @@ const CartNavbar = () => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', px:'2px', backgroundColor:primary, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'flex-end', textAlign: 'right' }}>
+      <Box sx={{ position:'sticky',top:75,zIndex:998,display: 'flex', px:'2px', backgroundColor:primary, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'flex-end', textAlign: 'right' }}>
         <FlexBetween padding="0.5rem 10%"  justifyContent="flex-end" alignItems="center">
         {/*<IconButton >
           <Link to='/favourites' color='dark'>

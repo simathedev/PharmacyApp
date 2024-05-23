@@ -55,7 +55,7 @@ const Index = () => {
                   display:"flex",
                 flexDirection:"column",
                   textAlign:"center",
-                  padding:"25px 10px",
+                  padding:isNonMobileScreens?"25px 10px":"16px 8px",
                   alignItems:"center",
                   justifyContent:"center",
                   backgroundColor:alt,

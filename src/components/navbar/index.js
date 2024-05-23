@@ -111,7 +111,7 @@ const renderLinksBasedOnRole = () => {
 };
 
     return(
-      <Box>
+      <Box sx={{backgroundColor:background,zIndex: 999, position: 'sticky', top: 0}}>
       <Box sx={{zIndex:9999}}>
       <FlexBetween padding="1rem 6%">
             <FlexBetween gap="1rem">
@@ -192,7 +192,7 @@ const renderLinksBasedOnRole = () => {
             right="0"
             bottom="0"
             height="100%"
-            zIndex="10"
+            zIndex="9999"
             maxWidth="500px"
             minWidth="300px"
             backgroundColor={background}
@@ -240,8 +240,8 @@ const renderLinksBasedOnRole = () => {
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton> 
-           
-            <FormControl variant="standard" value={fullName}>
+    
+           <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}
                 sx={{
@@ -268,6 +268,8 @@ const renderLinksBasedOnRole = () => {
                 </MenuItem>
               </Select>
             </FormControl> 
+          
+            
                 </FlexBetween>
             </Box>
         )}

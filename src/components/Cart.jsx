@@ -51,7 +51,7 @@ const Cart = () => {
           
           <Box sx={{display:'flex',flexDirection:'column',textAlign:'center',alignItems:'center',position:'relative'}}>
             <Box sx={{display:'flex', flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-            <Typography variant='h2'sx={{my:2,alignItems:'center',textAlign:'center'}}>Cart</Typography>
+            <Typography variant={isNonMobile?'h2':'h3'} sx={{my:2,alignItems:'center',textAlign:'center'}}>Cart</Typography>
             </Box>
             {items.length===0&&(
               <Box sx={{pl:4,pt:2}}>
@@ -69,8 +69,8 @@ const Cart = () => {
                 />
                 {/* Display item details */}
                 <Box sx={{display:'flex',flexDirection:'column'}}>
-                <Typography variant="h4" sx={{fontWeight:'bold'}}>{item.title}</Typography>
-                <Typography variant='h6'>R {item.price}</Typography>
+                <Typography variant= {isNonMobile?"h4":"h6"} sx={{fontWeight:'bold'}}>{item.title}</Typography>
+                <Typography variant={isNonMobile?"h6":"h7"}>R {item.price}</Typography>
                 <Box sx={{display:'flex', gap:2}}>
                 <FaMinus onClick={() => decreaseItemQuantity(item)}/>
                   {/*<button onClick={() => increaseItemQuantity(item)}>increase</button>*/}
@@ -85,7 +85,7 @@ const Cart = () => {
 
                   {items.length>0&&(
                    <Box sx={{textAlign:'center'}}>
-                     <Typography variant='h4' sx={{mt:4,mb:2}}>Total: R{total.toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2,  minimumIntegerDigits: 1, }).replace(/\,/g, '##').replace(/##/g, '.')}</Typography>
+                     <Typography variant={isNonMobile?'h4':'h6'} sx={{mt:4,mb:2}}>Total: R{total.toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2,  minimumIntegerDigits: 1, }).replace(/\,/g, '##').replace(/##/g, '.')}</Typography>
                     <Button  onClick={() => clearItemsCart()}>Clear Cart</Button>
                     <Link to='/cart'>
                     <Button>Checkout</Button>
