@@ -63,6 +63,7 @@ const Index = () => {
   }, [token]);
 
   return (
+
     <Box sx={{display:'flex',flexDirection:'column'}}>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
     <Link to={'/user/view/prescriptions'}>
@@ -79,7 +80,7 @@ const Index = () => {
       <Box sx={{textAlign:'center'}}>
       <Typography variant='h3' py="3">Prescription Details Page</Typography>
       </Box>
-      <Card sx={{width:isNonMobile?'70%':'90%',borderRadius:5,pl:4,marginTop:'4rem',minHeight:'40vh',py:4}}>
+      <Card sx={{width:isNonMobile?'70%':'90%',marginBottom:6,borderRadius:5,pl:4,marginTop:'4rem',minHeight:'40vh',py:4}}>
       {prescription.length === 0 && (
           <Typography variant="h4">No Prescription found...</Typography>
         )}

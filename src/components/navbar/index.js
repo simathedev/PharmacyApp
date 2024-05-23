@@ -118,7 +118,7 @@ const renderLinksBasedOnRole = () => {
             <FaPills color='#00A3FF' fontSize={isLargeScreen?'2.3rem':'1.4rem'}/>
             <Typography
             fontWeight="bold"
-            fontSize="clamp(1rem, 2rem, 2.25rem)"
+            fontSize="clamp(1rem, 1.8rem, 2.25rem)"
             color="primary"
              onClick={handleNavigate}
             sx={{

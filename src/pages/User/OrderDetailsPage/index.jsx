@@ -82,7 +82,7 @@ if (isLoading)
       
       <Typography variant='h3'>Order</Typography>
       <Box sx={{display:'flex',flex:'column',width:'100%',alignItems:'center', justifyContent:'center'}}>
-      <Card sx={{backgroundColor:alt,borderRadius:6,my:2,px:isNonMobile?6:4,py:6,textAlign:'left',width:isNonMobile?'76%':'90%'}}>
+      <Card sx={{backgroundColor:alt,borderRadius:6,marginTop:2,marginBottom:6,px:isNonMobile?6:4,py:6,textAlign:'left',width:isNonMobile?'76%':'90%'}}>
           <Grid container spacing={2}>
           <Grid item xs={12} sm={12}>
             <Box sx={{pb:2}}>
