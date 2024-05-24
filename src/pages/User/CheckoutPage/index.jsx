@@ -197,7 +197,7 @@ const stepValues={
     try {
       let updatedValues;
       //const orderRef=generateOrderNumber();
-
+      
      if(values.streetAddress){
       const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
       updatedValues = {
@@ -206,6 +206,7 @@ const stepValues={
         userPhoneNumber:userNumber,
         userAddress: concatenatedAddress,
         deliveryType: deliveryType,
+
       };
       setFormValues(updatedValues);
       //userDetails.streetAddress=concatenatedAddress
