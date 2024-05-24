@@ -47,13 +47,17 @@ const Cart = () => {
 
   return (
     <>
-    <Box sx={{width:isNonMobile?'35%':'68%',display:'flex',zIndex:9, flexDirection:'column', textAlign:'center',minHeight:'85vh',background:alt,padding:'2px 4px',position:'absolute',right:isNonMobile?20:2,display:'hidden',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
+    <Box sx={{zIndex:998, backgroundColor:alt,width:isNonMobile?'35%':'68%',display:'flex',flexDirection:'column', textAlign:'center',minHeight:'85vh',background:alt,padding:'2px 4px',position:'absolute',right:isNonMobile?20:2,display:'hidden',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
           
           <Box sx={{display:'flex',flexDirection:'column',textAlign:'center',alignItems:'center',position:'relative'}}>
             <Box sx={{display:'flex', flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-            <Typography variant={isNonMobile?'h2':'h3'} sx={{my:2,alignItems:'center',textAlign:'center'}}>Cart</Typography>
+            <Typography variant={isNonMobile?'h2':'h4'} sx={{my:2,alignItems:'center',textAlign:'center'}}>Cart</Typography>
             </Box>
-            {items.length===0&&(
+            <Box sx={{
+              height:'45%',
+              overflowY: 'auto'
+            }}>
+   {items.length===0&&(
               <Box sx={{pl:4,pt:2}}>
               <Typography variant='body1' color='primary' fontStyle='italic'>No items in cart</Typography>
               </Box>
@@ -82,6 +86,8 @@ const Cart = () => {
                 </Box>
                   </Box>
           ))}
+            </Box>
+         
 
                   {items.length>0&&(
                    <Box sx={{textAlign:'center'}}>

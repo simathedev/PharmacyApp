@@ -322,7 +322,7 @@ const stepValues={
            <Grid item xs={12} sm={12} md={12} lg={12} >
               <Card sx={{ backgroundColor:alt, mx: 2, px: 4, py: 1, display:'flex', flexDirection:'column', gap:1, width:'90%',textAlign: 'left', borderRadius:6 }}>
               <Typography variant='body2' sx={{fontWeight:'Bold'}}>{count} Items: R{total}</Typography>
-              <Box sx={{display:'flex', flexDirection:'row'}}>
+              <Box sx={{display:'flex', flexDirection:'row',gap:0.6}}>
            {items.map((item) => (
           <Box>
                  <img

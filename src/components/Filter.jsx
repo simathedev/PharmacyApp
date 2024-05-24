@@ -1,10 +1,17 @@
 import React, { useState } from "react";
-import { Box, Typography, FormControl, Select, MenuItem, TextField, Button, Checkbox, FormGroup, FormControlLabel, Slider } from '@mui/material';
+import { Box, Typography, FormControl, useTheme,Select, MenuItem, TextField, Button, Checkbox, FormGroup, FormControlLabel, Slider } from '@mui/material';
 
 const FilterComponent = ({ handleFilter }) => {
   const [inStock, setInStock] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 100]);
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+  const dark = theme.palette.neutral.dark;
+  const background = theme.palette.background.default;
+  const primaryLight = theme.palette.primary.light;
+  const alt = theme.palette.background.alt;
+  const primary=theme.palette.primary.main;
 
   const categories = [
     { name: 'Pain Relief', title: 'Pain Relief', link: '/buy/medication' },
@@ -75,10 +82,11 @@ const FilterComponent = ({ handleFilter }) => {
         min={0}
         max={100}
         aria-labelledby="price-range-slider"
+        sx={{width:'80%'}}
       />
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button variant="contained" onClick={handleApplyFilter}>Apply Filter</Button>
-        <Button variant="contained" onClick={handleClearFilter}>Clear Filter</Button>
+      <Box sx={{ display: 'flex', gap: 1}}>
+        <Button variant="contained" sx={{color:alt}} onClick={handleApplyFilter}>Apply Filter</Button>
+        <Button variant="contained" sx={{color:alt}} onClick={handleClearFilter}>Clear Filter</Button>
       </Box>
     </Box>
   );

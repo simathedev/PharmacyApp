@@ -49,6 +49,7 @@ const Index = () => {
   return (
     <Box sx={{minHeight:'100vh'}}>
       <CartNavbar/>
+
    <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2}}>
       <Link to={'/buy/medication'}>
           <BackButton />

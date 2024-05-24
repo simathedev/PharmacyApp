@@ -440,6 +440,22 @@ const Form = () => {
                 error={touched.email && Boolean(errors.email)}
                 helperText={touched.email && errors.email}
               />
+              {role==='user'&&(
+                <TextField
+                name="phoneNumber"
+                label="Phone Number"
+                value={values.phoneNumber}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.phoneNumber && Boolean(errors.phoneNumber)}
+                helperText={touched.phoneNumber && errors.phoneNumber}
+              />
+              )}
+
+
+  <Box>
+  {/* Label for Profile Picture */}
+  <Typography variant="subtitle2" sx={{ mb: 1 }}>Profile Picture</Typography>            
   <Dropzone
   acceptedFiles=".jpg,.jpeg,.png"
   multiple={false}
@@ -465,19 +481,10 @@ const Form = () => {
       )}
     </Box>
   )}
+  
 </Dropzone>
+</Box>
 
-              {role==='user'&&(
-                <TextField
-                name="phoneNumber"
-                label="Phone Number"
-                value={values.phoneNumber}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                error={touched.phoneNumber && Boolean(errors.phoneNumber)}
-                helperText={touched.phoneNumber && errors.phoneNumber}
-              />
-              )}
               
             </Box>
           )}
