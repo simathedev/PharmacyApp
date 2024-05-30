@@ -13,7 +13,7 @@ const Index = () => {
     <Box>
       
       <Box sx={{ml:3}}>
-        <Link to='/manage/medications' >
+        <Link to='/manage/medications' style={{textDecoration:'none'}} >
         <BackButton/>
         </Link>
       </Box>

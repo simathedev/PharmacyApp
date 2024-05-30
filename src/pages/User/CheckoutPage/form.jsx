@@ -137,7 +137,7 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
       enableReinitialize={true}
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(formikValues) => onSubmit(formikValues)}
+        onSubmit={(values)=>onSubmit(values)}
         //onSubmit={handleSubmit}
       >
         {({
@@ -161,32 +161,6 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
             >
                 {section === 'pharmacy' && (
                     <>
-{/*
-<TextField
-              label="Pharmacy"
-              name="pharmacy"
-              sx={{ gridColumn: "span 4" }}
-              select
-              SelectProps={{
-                native: true,
-              }}
-              value={values.pharmacy}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={touched.pharmacy && Boolean(errors.pharmacy)}
-              helperText={touched.pharmacy && errors.pharmacy}
-              margin="normal"
-              variant="outlined"
-                          >
-              <option value="">Select Pharmacy</option>
-              {pharmacies.map((pharmacy) => (
-                <option key={pharmacy._id} value={pharmacy._id}>
-                  {pharmacy.name}
-                </option>
-              ))}
-            </TextField>
-                */}
-            
             <TextField
                 label="Phone Number"
                 name="userPhoneNumber"

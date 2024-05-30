@@ -135,18 +135,18 @@ if(isLoading)
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
       {
         role=='pharmacist'?
-        <Link to={'/Pharmacist'}>
+        <Link to={'/Pharmacist'} style={{textDecoration:'none'}}>
         <BackButton/>
         </Link>
         :
-        <Link to={'/Admin'}>
+        <Link to={'/Admin'} style={{textDecoration:'none'}}>
         <BackButton/>
         </Link>
       }
       </Box>
 
       <Box sx={{alignItems:'left',justifyContent:'left',width:'30%',display:'flex',px:isNonMobile?'3rem':'0.5rem',py:1}}>
-      <Link to={'/Add/User'}>
+      <Link to={'/Add/User'} style={{textDecoration:'none'}}>
       <AddButton/>
       </Link>
     </Box>

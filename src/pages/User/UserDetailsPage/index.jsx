@@ -104,19 +104,19 @@ const Index = () => {
      <Box sx={{width:'80%',display:'flex',justifyContent:'left',pl:2}}>
     
     {role==="user" && (
-      <Link to={'/User'}>
+      <Link to={'/User'} style={{textDecoration:'none'}}>
         <BackButton />
       </Link>
     )}
   
     {role==="pharmacist" && (
-      <Link to={'/pharmacist'}>
+      <Link to={'/pharmacist'} style={{textDecoration:'none'}}>
         <BackButton />
       </Link>
     )}
 
     {role==="admin" && (
-      <Link to={'/admin'}>
+      <Link to={'/admin'} style={{textDecoration:'none'}}>
         <BackButton />
       </Link>
     )}

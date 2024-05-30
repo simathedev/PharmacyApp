@@ -13,7 +13,7 @@ const EditUserDetailsPage=()=>{
     return (
     <Box sx={{minHeight:'100vh'}}>
       <Box sx={{ml:3}}>
-        <Link to='/view/account' >
+        <Link to='/view/account' style={{textDecoration:'none'}}>
         <BackButton/>
         </Link>
       </Box>  

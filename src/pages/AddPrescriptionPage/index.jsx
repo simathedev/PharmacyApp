@@ -16,17 +16,17 @@ const Index = () => {
       
       <Box sx={{ml:3}}>
         {role==='pharmacist'&&(
-  <Link to='/manage/prescriptions' >
+  <Link to='/manage/prescriptions' style={{textDecoration:'none'}} >
   <BackButton/>
   </Link>
         )}
         {role==='admin'&&(
-  <Link to='/manage/prescriptions' >
+  <Link to='/manage/prescriptions' style={{textDecoration:'none'}} >
   <BackButton/>
   </Link>
         )}
         {role==='user'&&(
-  <Link to='/user/view/prescriptions' >
+  <Link to='/user/view/prescriptions' style={{textDecoration:'none'}} >
   <BackButton/>
   </Link>
         )}

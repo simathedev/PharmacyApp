@@ -75,7 +75,7 @@ if (isLoading)
 
     <Box sx={{textAlign:'center'}}>
     <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2}}>
-      <Link to={'/user/view/orders'}>
+      <Link to={'/user/view/orders'} style={{textDecoration:'none'}}>
           <BackButton />
         </Link>
       </Box>
@@ -127,7 +127,7 @@ if (isLoading)
               <Typography variant='body1' sx={{ fontSize: isNonMobile?'1.2rem':'0.8rem',mb:2 }}>{order.orderStatus} </Typography>
            
           </Grid>
-          <Box sx={{py:2,border:'1px sl'}}>
+          <Box sx={{py:2}}>
           <OrderStatus currentStatus={order.orderStatus} deliveryType={order.deliveryType} />
           </Box>
           </Grid>

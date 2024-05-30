@@ -68,7 +68,7 @@ const Index = () => {
   return (
     <Box sx={{minHeight:'100vh'}}>
    <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2}}>
-      <Link to={'/buy/medication'}>
+      <Link to={'/buy/medication'} style={{textDecoration:'none'}}>
           <BackButton />
         </Link>
       </Box> 
@@ -113,7 +113,7 @@ const Index = () => {
         {/*<Typography variant='h6'>Total Items: {count}</Typography>*/}
      <Typography variant='h4' sx={{mt:4,mb:2}}>Total: R{total}</Typography>
   {items.length>0&&(
-     <Button onClick={()=>handleCheckout(items)}>Checkout</Button>
+     <Button variant='contained' sx={{color:alt}} onClick={()=>handleCheckout(items)}>Checkout</Button>
   )}
     </Box>
     </Box>

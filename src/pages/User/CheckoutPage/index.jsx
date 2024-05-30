@@ -37,8 +37,11 @@ const Index = () => {
   const primary=theme.palette.primary.main;
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const isLargeScreen= useMediaQuery("(min-width:900px)");
+  const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:899px)");
   const token = useSelector((state) => state.auth.token);
   const items = useSelector((state) => state.cart.items);
+  const products = useSelector((state)=>state.cart.items.slice(0,3));
   const count = useSelector((state) => state.cart.count);
   const total = useSelector((state) => (state.cart.total).toFixed(2));
   const user=useSelector((state)=>state.auth.user);
@@ -196,29 +199,31 @@ const stepValues={
   const handleSubmit = async (values) => {
     try {
       let updatedValues;
-      //const orderRef=generateOrderNumber();
       
      if(values.streetAddress){
       const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
       updatedValues = {
         ...values,
         user:userID,
-        userPhoneNumber:userNumber,
+        userPhoneNumber:values.userPhoneNumber,
         userAddress: concatenatedAddress,
         deliveryType: deliveryType,
 
       };
       setFormValues(updatedValues);
-      //userDetails.streetAddress=concatenatedAddress
-    //  const updatedUserDetails = [...userDetails]; // Create a copy of the array
-//if (updatedUserDetails.length > 0) {
-  //updatedUserDetails[0] = {
-   // ...updatedUserDetails[0], // Copy the existing object
-   // streetAddress: concatenatedAddress, // Update the streetAddress property
-  //};
-  //setUserDetails(updatedUserDetails); // Update the state with the new array
-//}
+      console.log("updated values changed address form fields in handle submit: ",updatedValues)
+
      }
+     else if(values.userPhoneNumber)
+      {
+        updatedValues={
+          ...values,
+          userPhoneNumber:values.userPhoneNumber,
+        }
+        setFormValues(updatedValues);
+        console.log("changed number fields in handle submit: ",updatedValues)
+
+      }
      else
      {
       updatedValues = {
@@ -230,6 +235,7 @@ const stepValues={
         pharmacy:selectedPharmacy._id,
       };
       setFormValues(updatedValues);
+      console.log("updated values unchanged form fields in handle submit: ",updatedValues)
 
      }
   
@@ -311,7 +317,7 @@ const stepValues={
   return (
     <Box sx={{minHeight:'100vh'}}>
     <Box sx={{width:'50%',display:'flex',justifyContent:'left',pl:2}}>
-       <Link to={'/buy/medication'}>
+       <Link to={'/buy/medication'} style={{textDecoration:'none'}}>
            <BackButton />
          </Link>
        </Box> 
@@ -345,7 +351,7 @@ const stepValues={
          <Box display="flex" width={isNonMobile?'50%':'90%'} alignItems='center' justifyContent='center' >
         
            <Button
-           sx={{width:'40%',py:3,gap:1,
+           sx={{width:'40%',py:isLargeScreen?3:isMediumScreen?2:1.5,gap:1,
            '&.MuiButton-contained': {
             color: 'white',
           },
@@ -354,7 +360,7 @@ const stepValues={
           onClick={() => handleDeliveryOption('collection')}>  <MdLocalPharmacy />Collection</Button>
            
            <Button 
-             sx={{width:'40%',py:3,gap:1,
+             sx={{width:'40%',py:isLargeScreen?3:isMediumScreen?2:1.5,gap:1,
              '&.MuiButton-contained': {
               color: 'white',
             },

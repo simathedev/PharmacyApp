@@ -14,6 +14,8 @@ const Cart = () => {
   const count = useSelector((state) => state.cart.count);
   const total = useSelector((state) => state.cart.total);
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const isLargeScreen= useMediaQuery("(min-width:900px)");
+  const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:899px)");
   console.log("items from state:",items)
   console.log("total from state:",total)
   console.log("count from state:",count)
@@ -47,7 +49,7 @@ const Cart = () => {
 
   return (
     <>
-    <Box sx={{zIndex:998, backgroundColor:alt,width:isNonMobile?'35%':'68%',display:'flex',flexDirection:'column', textAlign:'center',height:isNonMobile?'85vh':'68vh',background:alt,padding:'2px 4px',position:'absolute',right:isNonMobile?20:2,display:'hidden',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
+    <Box sx={{zIndex:998, backgroundColor:alt,width:isLargeScreen?'35%':isMediumScreen?'45%':'68%',display:'flex',flexDirection:'column', textAlign:'center',height:isNonMobile?'85vh':'68vh',background:alt,padding:'2px 4px',position:'absolute',right:2,display:'hidden',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
           
           <Box sx={{display:'flex',flexDirection:'column',textAlign:'center',alignItems:'center',position:'relative'}}>
             <Box sx={{display:'flex', flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
@@ -100,10 +102,12 @@ const Cart = () => {
                   {items.length>0&&(
                    <Box sx={{textAlign:'center'}}>
                      <Typography variant={isNonMobile?'h4':'h6'} sx={{mt:4,mb:2}}>Total: R{total.toLocaleString('en-ZA', {minimumFractionDigits: 2, maximumFractionDigits: 2,  minimumIntegerDigits: 1, }).replace(/\,/g, '##').replace(/##/g, '.')}</Typography>
-                    <Button  onClick={() => clearItemsCart()}>Clear Cart</Button>
-                    <Link to='/cart'>
-                    <Button>Checkout</Button>
+                     <Box sx={{display:'flex',textAlign:'center',gap:1}}>
+                    <Button variant='outlined' onClick={() => clearItemsCart()}>Clear Cart</Button>
+                    <Link to='/cart' style={{textDecoration:'none'}}>
+                    <Button variant='contained' sx={{color:alt}}>Checkout</Button>
                     </Link>
+                    </Box>
                     </Box>
                   )}
       

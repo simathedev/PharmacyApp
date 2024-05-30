@@ -226,17 +226,17 @@ const fetchScripts = async () => {
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
       {
         role=='pharmacist'?
-        <Link to={'/Pharmacist'}>
+        <Link to={'/Pharmacist'} style={{textDecoration:'none'}}>
         <BackButton/>
         </Link>
         :
-        <Link to={'/Admin'}>
+        <Link to={'/Admin'} style={{textDecoration:'none'}}>
         <BackButton/>
         </Link>
       }
       </Box>
       <Box sx={{alignItems:'left',justifyContent:'left',width:'30%',display:'flex',px:isNonMobile?'3rem':'0.5rem',py:1}}>
-      <Link to={'/Add/Prescription'}>
+      <Link to={'/Add/Prescription'} style={{textDecoration:'none'}}>
       <AddButton/>
       </Link>
       </Box>
@@ -309,7 +309,7 @@ const fetchScripts = async () => {
        
           <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:isNonMobile?2:1}}>
   
-          <Link to={`/Edit/Prescription/${medication?._id}`}>
+          <Link to={`/Edit/Prescription/${medication?._id}`} style={{textDecoration:'none'}}>
           <EditButton/>
           </Link>
           <DeleteButton onClick={() => setDeleteItemId(medication?._id)}/>

@@ -39,19 +39,19 @@ const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
 </Typography>
 {role==='admin'?(
 <>
-<Link to='admin'>
+<Link to='admin' style={{textDecoration:'none'}}>
 <Button sx={{fontSize:!isNonMobile&&'0.6rem'}} >Return To Homepage</Button>
 </Link>
 </>
 ):role==='pharmacist'?(
 <>
-<Link to='/pharmacist'>
+<Link to='/pharmacist' style={{textDecoration:'none'}}>
 <Button>Return To Homepage</Button>
 </Link>
 </>
 ):(
 <>
-<Link to='/user'>
+<Link to='/user' style={{textDecoration:'none'}}>
 <Button>Return To Homepage</Button>
 </Link>
 </>

@@ -135,7 +135,7 @@ const Index = () => {
       <Typography variant={isNonMobile?'h1':'h3'} sx={{mt:isNonMobile?5:2}}>Manage Pharmacies</Typography>
       <SearchWidget searchQuery={searchQuery} setSearchQuery={setSearchQuery} isNonMobile={isNonMobile}/>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
-      <Link to={'/Admin'}>
+      <Link to={'/Admin'} style={{textDecoration:'none'}}>
       <BackButton/>
       </Link>
       </Box>
@@ -186,7 +186,7 @@ const Index = () => {
           </Grid>
        
           <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:isNonMobile?2:1}}>
-          <Link to={`/Edit/Pharmacy/${pharmacy._id}`}>
+          <Link to={`/Edit/Pharmacy/${pharmacy._id}`} style={{textDecoration:'none'}}>
           <EditButton/>
           </Link>
           <DeleteButton onClick={() => setDeleteItemId(pharmacy._id)}/>

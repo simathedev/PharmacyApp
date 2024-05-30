@@ -97,7 +97,7 @@ if(isLoading)
     <CartNavbar/>
     </Box>
     <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2,pt:2}}>
-      <Link to={'/buy/medication'}>
+      <Link to={'/buy/medication'} style={{textDecoration:'none'}}>
           <BackButton />
         </Link>
       </Box>

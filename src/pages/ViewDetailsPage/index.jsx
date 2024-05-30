@@ -317,7 +317,7 @@ return <Loading/>
 <Box sx={{minHeight:"100vh"}}>
 
 <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
-  <Link to={backLink}>
+  <Link to={backLink} style={{textDecoration:'none'}}>
   <BackButton/>
   </Link>
 </Box>
@@ -326,7 +326,7 @@ return <Loading/>
 </Box>
 
 <Box sx={{display:'flex', pl:2,flexDirection:isNonMobile?'row':'column', gap:1,alignItems:'left',justifyContent:'left',width:'30%',display:'flex',px:isNonMobile?'3rem':'0.5rem',py:1}}>
-<Link to={addLink}>
+<Link to={addLink} style={{textDecoration:'none'}}>
 <AddButton/>
 </Link>
 
@@ -392,7 +392,7 @@ return <Loading/>
 )}
 
 <Box sx={{display:'flex',gap:1,my:1}}>
-<Link to={`/edit/order/${responseData._id}`}>
+<Link to={`/edit/order/${responseData._id}`} style={{textDecoration:'none'}}>
 <EditButton/>
 </Link>
 <DeleteButton onClick={() => setDeleteItemId(responseData._id)}/>
@@ -463,7 +463,7 @@ Pharmacy: {responseData?.pharmacy?.name}
 )}
 
 <Box sx={{display:'flex',gap:1,my:1}}>
-<Link to={`/edit/prescription/${responseData._id}`}>
+<Link to={`/edit/prescription/${responseData._id}`} style={{textDecoration:'none'}}>
 <EditButton/>
 </Link>
 <DeleteButton onClick={() => setDeleteItemId(responseData._id)}/>
@@ -500,7 +500,7 @@ Pharmacy: {responseData?.pharmacy?.name}
 </Box>
 
 <Box sx={{display:'flex',gap:1,my:1}}>
-<Link to={`/edit/medication/${responseData._id}`}>
+<Link to={`/edit/medication/${responseData._id}`} style={{textDecoration:'none'}}>
 <EditButton/>
 </Link>
 <DeleteButton onClick={() => setDeleteItemId(responseData._id)}/>
@@ -539,7 +539,7 @@ Pharmacy: {responseData?.pharmacy?.name}
 
   </Box>
   <Box sx={{display:'flex',gap:1,my:1}}>
-  <Link to={`/edit/user/${responseData._id}`}>
+  <Link to={`/edit/user/${responseData._id}`} style={{textDecoration:'none'}}>
 <EditButton/>
 </Link>
 <DeleteButton onClick={() => setDeleteItemId(responseData._id)}/>
@@ -575,7 +575,7 @@ Operating times: {responseData.openTime+"-"+responseData.closeTime}
  </Box>
  
 <Box sx={{display:'flex',gap:1,my:1}}>
-<Link to={`/edit/pharmacy/${responseData._id}`}>
+<Link to={`/edit/pharmacy/${responseData._id}`} style={{textDecoration:'none'}}>
 <EditButton/>
 </Link>
 <DeleteButton onClick={() => setDeleteItemId(responseData._id)}/>
@@ -608,7 +608,7 @@ Pharmacy: {responseData?.pharmacy?.name}
 
  </Box>
 <Box sx={{display:'flex',gap:1,my:1}}>
-<Link to={`/edit/pharmacist/${responseData._id}`}>
+<Link to={`/edit/pharmacist/${responseData._id}`} style={{textDecoration:'none'}}>
 <EditButton/>
 </Link>
 <DeleteButton onClick={() => setDeleteItemId(responseData._id)}/>

@@ -68,7 +68,7 @@ return <Loading/>
     <Box sx={{ minHeight: '100vh' }}>
         <Box sx={{ textAlign: 'center', padding: '20px' }}>
           <Box sx={{ display: 'flex', justifyContent: 'left', paddingLeft: '20px' }}>
-            <Link to={'/User'}>
+            <Link to={'/User'} style={{textDecoration:'none'}}>
               <BackButton />
             </Link>
           </Box>

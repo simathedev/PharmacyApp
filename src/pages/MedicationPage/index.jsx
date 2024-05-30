@@ -206,7 +206,7 @@ const MedicationPage = () => {
 
             <Box sx={{ textAlign: 'center', mt: 2, display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ width: '100%', display: 'flex', justifyContent: 'left', pl: 2 }}>
-                    <Link to={'/User'}>
+                    <Link to={'/User'} style={{textDecoration:'none'}}>
                         <BackButton />
                     </Link>
                 </Box>

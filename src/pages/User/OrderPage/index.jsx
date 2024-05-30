@@ -83,7 +83,7 @@ const Index = () => {
 </Box>*/}
     <Box sx={{textAlign:'center'}}>
     <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2}}>
-      <Link to={'/User'}>
+      <Link to={'/User'} style={{textDecoration:'none'}}>
           <BackButton />
         </Link>
       </Box>

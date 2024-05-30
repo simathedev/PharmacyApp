@@ -51,7 +51,7 @@ const Index = () => {
       <CartNavbar/>
 
    <Box sx={{width:'100%',display:'flex',justifyContent:'left',pl:2}}>
-      <Link to={'/buy/medication'}>
+      <Link to={'/buy/medication'} style={{textDecoration:'none'}}>
           <BackButton />
         </Link>
       </Box> 

@@ -16,7 +16,7 @@ display:'flex', flexDirection:'column', textAlign:'center', alignItems:'center',
    {/* <FaPills fontSize='2rem' color={palette.primary.main}/>*/} 
  <Typography variant='h2' color='primary' fontWeight='bold' my='1rem'>Access Denied</Typography>
  <Typography variant='h4'>You are not permitted to view this page</Typography>
- <Link to='/'>
+ <Link to='/' style={{textDecoration:'none'}}>
  <Button color='primary'>Sign In</Button>
  </Link>
     </Box>

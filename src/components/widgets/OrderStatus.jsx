@@ -28,10 +28,9 @@ const OrderStatus = ({ currentStatus, deliveryType }) => {
         padding: 1,
         flexWrap: "wrap", // Allow items to wrap onto the next line
         width:'100%',
+        border:'1px solid white',
         borderRadius:6,
         backgroundColor:primary,
-      
-        // border:'2px dashed green',
       }}
     >
       {[
@@ -47,8 +46,9 @@ const OrderStatus = ({ currentStatus, deliveryType }) => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            textAlign:"center",
             margin:isNonMobile?1:0.4,
-            width:isNonMobile?'7rem':'4rem',
+            width:isNonMobile?'4.9rem':'2.9rem',
             textAlign: "center",
           }}
         >
@@ -60,10 +60,12 @@ const OrderStatus = ({ currentStatus, deliveryType }) => {
             }}
           />
           <Typography
-            variant="subtitle2"
+            variant={isNonMobile?"subtitle2":"subtitle3"}
             sx={{
               fontWeight: currentStatus === item.text ? "bold" : "normal",
               color: getStatusColor(item.text),
+              fontSize:!isNonMobile&&'0.5rem',
+              width:'0.7rem',
             }}
           >
             {item.text}

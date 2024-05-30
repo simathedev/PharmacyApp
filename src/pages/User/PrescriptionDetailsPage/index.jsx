@@ -66,13 +66,13 @@ const Index = () => {
 
     <Box sx={{display:'flex',flexDirection:'column'}}>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
-    <Link to={'/user/view/prescriptions'}>
+    <Link to={'/user/view/prescriptions'} style={{textDecoration:'none'}}>
     <BackButton/>
     </Link>
   
     </Box>
     <Box sx={{alignItems:'left',justifyContent:'left',width:'30%',display:'flex',px:isNonMobile?'3rem':'0.5rem',py:1}}>
-    <Link to={'/user/add/prescription'}>
+    <Link to={'/user/add/prescription'} style={{textDecoration:'none'}}>
     <AddButton/>
     </Link>
     </Box>

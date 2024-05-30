@@ -74,7 +74,7 @@ const MedicationNotification = () => {
           </Grid>
        
         <Grid item xs={12} sx={{display:'flex', alignItems:'left',justifyContent:'left'}}>
-         <Link to={`/Edit/Medication/${medication._id}`}>
+         <Link to={`/Edit/Medication/${medication._id}`} style={{textDecoration:'none'}}>
         <Button>Update</Button>
          </Link>
           {/*possibly delete order?

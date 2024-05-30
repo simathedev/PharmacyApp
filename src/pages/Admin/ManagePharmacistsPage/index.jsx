@@ -130,12 +130,12 @@ if(isLoading)
       <Typography variant={isNonMobile?'h1':'h3'} sx={{mt:isNonMobile?5:2}}>Manage Pharmacists</Typography>
       <SearchWidget searchQuery={searchQuery} setSearchQuery={setSearchQuery} isNonMobile={isNonMobile}/>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
-      <Link to={'/Admin'}>
+      <Link to={'/Admin'} style={{textDecoration:'none'}}>
       <BackButton/>
       </Link>
       </Box>
       <Box sx={{alignItems:'left',justifyContent:'left',width:'30%',display:'flex',px:isNonMobile?'3rem':'0.5rem',py:1}}>
-      <Link to={'/Add/Pharmacist'}>
+      <Link to={'/Add/Pharmacist'} style={{textDecoration:'none'}}>
       <AddButton/>
       </Link>
       </Box>
@@ -188,7 +188,7 @@ if(isLoading)
           </Grid>
        
           <Grid item xs={12} sm={6} sx={{display:'flex', alignItems:isNonMobile?'center':'left',justifyContent:isNonMobile?'center':'left',gap:2}}>
-       <Link to={`/Edit/Pharmacist/${pharmacist._id}`}>
+       <Link to={`/Edit/Pharmacist/${pharmacist._id}`} style={{textDecoration:'none'}}>
        <EditButton/>
        </Link>
        <DeleteButton onClick={() => setDeleteItemId(pharmacist._id)}/>
