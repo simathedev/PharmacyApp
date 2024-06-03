@@ -56,7 +56,7 @@ const Cart = () => {
             <Typography variant={isNonMobile?'h2':'h4'} sx={{my:2,alignItems:'center',textAlign:'center'}}>Cart</Typography>
             </Box>
             <Box sx={{
-  height: '200px',
+  height: '250px',
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
     width: '8px', // Width of the scrollbar
