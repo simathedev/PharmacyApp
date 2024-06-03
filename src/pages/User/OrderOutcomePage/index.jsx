@@ -83,7 +83,7 @@ return <Loading/>
                 {/*<LuPackageCheck />*/}
                   <FcPaid style={{ fontSize:isNonMobile?'40px':'36px', color: primary, marginTop:'2px', marginBottom: '10px' }} /><br />
                   Thank you for placing your order with us. Your order is currently in <span style={{ fontWeight: 'bold', color: primary }}>{order?.orderStatus}</span>. We have noted that you have opted for
-                  <span style={{ fontWeight: 'bold', color: primary }}> {order?.deliveryType}</span> for this delivery.
+                  <span style={{ fontWeight: 'bold', color: primary }}> {order?.deliveryType}</span> for this order.
                   The items will be sourced from <span style={{ fontWeight: 'bold', color: primary }}> {order.pharmacy?.name}</span>.
                   <br/><br/>We will keep you updated on the progress of your order. If you have any questions or need further assistance,
                   please feel free to reach out to our customer support team. 
