@@ -45,13 +45,16 @@ const Index = () => {
           },
         });
         if (response.ok) {
+          setIsLoading(false);
           const scriptData = await response.json();
           console.log("script data:",scriptData);
           setPrescription(scriptData);
         } else {
+          setIsLoading(false);
           console.log("Failed to fetch script");
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("Error fetching script:", error);
       }
       finally {
@@ -61,12 +64,16 @@ const Index = () => {
 
     fetchPrescription();
   }, [token]);
-
+  
+if(isLoading)
+  {
+    return <Loading/>
+  }
   return (
 
     <Box sx={{display:'flex',flexDirection:'column'}}>
       <Box sx={{alignItems:'left',justifyContent:'left',display:'flex',px:isNonMobile?'3rem':'0.5rem'}}>
-    <Link to={'/user/view/prescriptions'} style={{textDecoration:'none'}}>
+    <Link to={'/user/view/prescriptions'} >
     <BackButton/>
     </Link>
   
