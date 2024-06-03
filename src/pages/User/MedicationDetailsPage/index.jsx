@@ -102,7 +102,7 @@ if(isLoading)
         </Link>
       </Box>
       <Box sx={{display:'flex', flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-      <Card sx={{ pt:10,pb:5,width:'80%', minHeight:'60vh', borderRadius:6,display:'flex',mt:isNonMobile&&10,flexDirection:isNonMobile?'row':'column', alignItems:'center', justifyContent:isNonMobile&&'center'}}>
+      <Card sx={{ mb:8,pt:10,pb:5,width:'80%', minHeight:'60vh', borderRadius:6,display:'flex',mt:isNonMobile&&10,flexDirection:isNonMobile?'row':'column', alignItems:'center', justifyContent:isNonMobile&&'center'}}>
 
 <img
             width={isNonMobile?"250px":"120px"}
