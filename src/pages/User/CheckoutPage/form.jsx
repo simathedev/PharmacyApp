@@ -18,7 +18,7 @@ import {
   import { useNavigate } from "react-router-dom";
   import { toast } from 'react-toastify';
   
-  const Form = ({ section, values,onSubmit }) => {
+  const Form = ({ section, values,onSubmit,onFormSubmit, setFormValues,setUserDetails,userDetails,formValues}) => {
 const [initialValues, setInitialValues] = useState({});
 const [validationSchema, setValidationSchema] = useState(yup.object());
 
@@ -129,7 +129,70 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
         }
       }, [section]);
   
-   
+      const handleSubmit = async (values) => {
+        try {
+          let updatedValues;
+          
+         if(values.streetAddress){
+          const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
+          updatedValues = {
+            ...values,
+            //user:userID,
+            userPhoneNumber:values.userPhoneNumber,
+            userAddress: concatenatedAddress,
+            //deliveryType: deliveryType,
+    
+          };
+          //setFormValues(updatedValues);
+          console.log("updated values changed address form fields in handle submit: ",updatedValues)
+    
+         }
+         else if(values.userPhoneNumber)
+          {
+            updatedValues={
+              ...values,
+              userPhoneNumber:values.userPhoneNumber,
+            }
+            //setFormValues(updatedValues);
+            console.log("changed number fields in handle submit: ",updatedValues)
+    
+          }
+          else {
+            console.log('just testing')
+          }
+
+        /* else{
+          updatedValues = {
+            ...values,
+            user:userID,
+            userPhoneNumber:userNumber,
+            userAddress:userHomeAddress,
+            deliveryType: deliveryType,
+            pharmacy:selectedPharmacy._id,
+          };
+         // setFormValues(updatedValues);
+          console.log("updated values unchanged form fields in handle submit: ",updatedValues)
+    
+         }*/
+      
+    
+          //const values
+          
+            //console.log('Submitting checkout details:', formValues);
+            onFormSubmit(updatedValues,formValues,userDetails);
+            setFormValues((prevFormValues) => ({
+              ...prevFormValues,
+              updatedValues,
+            }));
+        
+            setUserDetails((prevUserDetails) => ({
+              ...prevUserDetails,
+             updatedValues, 
+            }));
+          } catch (error) {
+          console.error('Error submitting form:', error);
+        }
+      };
 
    
     return (
@@ -137,8 +200,8 @@ const [validationSchema, setValidationSchema] = useState(yup.object());
       enableReinitialize={true}
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={(values)=>onSubmit(values)}
-        //onSubmit={handleSubmit}
+       // onSubmit={(values)=>onSubmit(values)}
+      onSubmit={handleSubmit}
       >
         {({
           values,

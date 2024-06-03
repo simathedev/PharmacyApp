@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
-const ScriptNotification = () => {
+const ScriptNotification = ({hasNotifications}) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [scripts, setScripts] = useState([]);
   const [loading, setLoading] = useState(true); 
@@ -43,10 +43,20 @@ const ScriptNotification = () => {
         const scriptsData = await response.json();
         console.log("scripts data:", scriptsData)
         setScripts(scriptsData);
+       /* if(scriptsData.length>0)
+          {
+            //onNotificationChange(true);
+
+          }
+          else{
+            //onNotificationChange(false); 
+          }*/
       } else {
+        //onNotificationChange(false);
         console.log('Failed to fetch scripts');
       }
     } catch (error) {
+     // onNotificationChange(false);
       console.error('Error fetching scripts:', error);
     }
     finally {
@@ -57,6 +67,10 @@ const ScriptNotification = () => {
   useEffect(() => {
     fetchNewScripts();
   }, [token]);
+
+  useEffect(() => {
+    hasNotifications(scripts.length > 0); // Notify parent component if there are orders
+  }, [scripts]);
 
   const updateApprovedScript = async (id) => {
     try {

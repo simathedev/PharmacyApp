@@ -55,7 +55,7 @@ const isMediumScreen = useMediaQuery("(min-width:500px) and (max-width:800px)");
       } catch (error) {
         console.error("Error fetching order:", error);
       } finally {
-        setLoading(false); // Set loading to false when data fetching is completed
+        setLoading(false); 
       }
     };
 

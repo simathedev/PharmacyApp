@@ -54,9 +54,6 @@ const Index = () => {
   console.log("Pharmacy:",selectedPharmacy);
   const [loading, setLoading] = useState(true);
   console.log("items from state in checkout page:",items);
-  //console.log("total from state:",total)
-  //console.log("count from state:",count)
-  console.log("",)
 
   /*const generateOrderNumber = () => {
     const timestamp = Date.now().toString(); // Get current timestamp as string
@@ -79,7 +76,6 @@ const Index = () => {
    const clearItemsCart = () => {
     dispatch(clearCart());
    };
-
 
    const [deliveryType, setDeliveryType] = useState(null);
    const [addressDetails, setAddressDetails] = useState(false);
@@ -119,6 +115,7 @@ const stepValues={
   deliveryType: deliveryType,
   pharmacy:selectedPharmacy,
  userPhoneNumber: userNumber,
+ ...formValues,
 }
     setFormValues(stepValues);
    console.log("form values:",stepValues);
@@ -138,7 +135,7 @@ const stepValues={
         });
         if (response.ok) {
           const userData = await response.json();
-          console.log("userData in checkout page:",userData)
+          console.log("USERDATA IN CHECKOUT PAGE:",userData)
           setUserDetails(userData)
         
         } else {
@@ -196,60 +193,51 @@ const stepValues={
   };
   let values;
 
-  const handleSubmit = async (values) => {
-    try {
-      let updatedValues;
-      
-     if(values.streetAddress){
-      const concatenatedAddress = `${values.streetAddress},${values.suburb},${values.city},${values.province},${values.postalCode}`;
-      updatedValues = {
-        ...values,
-        user:userID,
-        userPhoneNumber:values.userPhoneNumber,
-        userAddress: concatenatedAddress,
-        deliveryType: deliveryType,
 
-      };
-      setFormValues(updatedValues);
-      console.log("updated values changed address form fields in handle submit: ",updatedValues)
-
-     }
-     else if(values.userPhoneNumber)
-      {
-        updatedValues={
-          ...values,
-          userPhoneNumber:values.userPhoneNumber,
-        }
-        setFormValues(updatedValues);
-        console.log("changed number fields in handle submit: ",updatedValues)
-
-      }
-     else
-     {
-      updatedValues = {
-        ...values,
-        user:userID,
-        userPhoneNumber:userNumber,
-        userAddress:userHomeAddress,
-        deliveryType: deliveryType,
-        pharmacy:selectedPharmacy._id,
-      };
-      setFormValues(updatedValues);
-      console.log("updated values unchanged form fields in handle submit: ",updatedValues)
-
-     }
+  const handleFormSubmit = (formData) => {
+    console.log("Form data received in parent component:", formData);
+    setEditingSection(null);
+    /*setUserDetails((userDetails) => ({
+      ...userDetails,
+      phoneNumber:formData.userPhoneNumber,
+    }));*/
+    setUserDetails((userDetails) => {
+      const updatedUserDetails = { ...userDetails };
   
+      if (formData.userPhoneNumber) {
+        updatedUserDetails.phoneNumber = formData.userPhoneNumber;
+      }
+  
+      if (formData.streetAddress) {
+        updatedUserDetails.streetAddress = formData.userAddress;
+        updatedUserDetails.phoneNumber = formData.userPhoneNumber;
+      }
+  
+      return updatedUserDetails;
+    });
+    setFormValues((formValues)=>{
+    const updatedFormDetails = { ...formValues };
+  
+      if (formData.userPhoneNumber) {
+        updatedFormDetails.userPhoneNumber = formData.userPhoneNumber;
+      }
+  
+      if (formData.streetAddress) {
+        updatedFormDetails.userAddress = formData.userAddress;
+        updatedFormDetails.usePhoneNumber = formData.userPhoneNumber;
+      }
+  
+      return updatedFormDetails;
+  })
+   
 
-      //const values
-      
-        console.log('Submitting checkout details:', formValues);
-      } catch (error) {
-      console.error('Error submitting form:', error);
-    }
   };
-
-  const order=async(formValues)=>{
+ // console.log("form values in handle form submit:",formValues);
+ // console.log("user details in handle form submit:",userDetails);
+  
+ const order=async(formValues)=>{
     try {
+      console.log("form Values when creating order:",formValues)
     const orderResponse=await fetch(
       `${apiUrlSegment}/order/addOrder`,
       {
@@ -403,11 +391,11 @@ const stepValues={
        {(!editingSection||!addressDetails)&&(
         <>
          <Typography variant='h5' sx={{py:2}}>
- {userDetails?userHomeAddress:userDetails.streetAddress}
+ {userDetails?.streetAddress}
 </Typography>
 <Typography sx={{pb:2}}>
 <FcPhone />
-{userDetails?userNumber:userDetails.phoneNumber}
+{userDetails?.phoneNumber}
    </Typography>
 <Button variant='outlined' onClick={()=>handleStepData(3)}>
      Confirm
@@ -418,7 +406,7 @@ const stepValues={
        )}
       
             {(editingSection&&addressDetails) && (
-         <Form section={editingSection} values={values} onSubmit={handleSubmit} />
+         <Form section={editingSection} values={values} setFormValues={setFormValues} formValues={formValues} setUserDetails={setUserDetails} userDetails={userDetails} onFormSubmit={handleFormSubmit} />
        )}
      </Card>
  )
@@ -453,14 +441,14 @@ const stepValues={
                 <Box sx={{gap:1, py:2, textAlign:'center',justifyContent:'center'}}>
            
            <Typography variant='h5'>
-              {selectedPharmacy.name}
+              {selectedPharmacy?.name}
               </Typography>
               <Typography variant='h5'>
-              {selectedPharmacy.streetAddress}
+              {selectedPharmacy?.streetAddress}
               </Typography>
            </Box>
            <Typography>
-           <FcPhone /> {userDetails?userNumber:userDetails.phoneNumber}
+           <FcPhone /> {userDetails?.phoneNumber}
           </Typography>
            <Button variant='outlined' onClick={()=>handleStepData(3)}>
             Confirm
@@ -469,7 +457,7 @@ const stepValues={
               )}
             
             {(editingSection&&pharmacyDetails) && (
-         <Form section={editingSection} values={values} onSubmit={handleSubmit}/>
+         <Form section={editingSection} values={values} setFormValues={setFormValues} formValues={formValues} setUserDetails={setUserDetails} userDetails={userDetails} onFormSubmit={handleFormSubmit}/>
             )}
              </Card>
            )
@@ -483,7 +471,7 @@ const stepValues={
       <Typography variant={isNonMobile?'h3':'h4'} sx={{my:3}}>4. Confirm Card Details</Typography>
          {addressStep>=3&&(
           <>
-            <CardWidget handleStepData={handleStepData} values={values} editing={editing} cardDetails={cardDetails} editingSection={editingSection} handleEditClick={handleEditClick} handleSubmit={handleSubmit} />
+            <CardWidget handleStepData={handleStepData} values={formValues} editing={editing} cardDetails={cardDetails} editingSection={editingSection} handleEditClick={handleEditClick} />
           {  addressStep>=4&&(
 
           <Button variant='contained' sx={{my:2,color:alt}} onClick={() => order(formValues)}>Create order</Button>

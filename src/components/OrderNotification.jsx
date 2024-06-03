@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const OrderNotification = () => {
+const OrderNotification = ({hasNotifications}) => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,6 +18,8 @@ const OrderNotification = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
   const primary=theme.palette.primary.main;
+
+  //const hasNotifications = notifications.length > 0;
 
   let apiUrlSegment=process.env.NODE_ENV === 'production' ?
   `https://pharmacy-app-api.vercel.app`
@@ -41,10 +43,24 @@ const OrderNotification = () => {
         console.log("orders data:", ordersData);
         const sortedOrders = ordersData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setOrders(sortedOrders);
-      } else {
-        console.log('Failed to fetch orders');
+        /*if(ordersData.length>0)
+          {
+           // onNotificationChange(true);
+
+          }
+          else
+          {
+            //onNotificationChange(false);
+
+          }*/
       }
-    } catch (error) {
+       else {
+        //onNotificationChange(false);
+        console.log('Failed to fetch orders');
+    }
+  }
+    catch (error) {
+      //onNotificationChange(false);
       console.error('Error fetching orders:', error);
    }  finally {
       setLoading(false); // Set loading to false once data fetching is done
@@ -54,6 +70,10 @@ const OrderNotification = () => {
   useEffect(() => {
     fetchNewOrders();
   }, [token]);
+
+  useEffect(() => {
+    hasNotifications(orders.length > 0); // Notify parent component if there are orders
+  }, [orders]);
 
   const updateOrderStatus = async (id, status) => {
     try {

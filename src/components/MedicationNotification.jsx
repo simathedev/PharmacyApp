@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 
-const MedicationNotification = () => {
+const MedicationNotification = ({hasNotifications}) => {
 
   const theme = useTheme();
   const neutralLight = theme.palette.neutral.light;
@@ -45,15 +45,28 @@ const MedicationNotification = () => {
             const medicationData = await response.json();
             console.log("medication data:",medicationData)
             setMedications(medicationData);
+            /*if(medicationData.length>0)
+              {
+                //onNotificationChange(true);
+              }
+              else
+              {
+               // onNotificationChange(false);
+              }*/
           } else {
+            //onNotificationChange(false);
             console.log('Failed to fetch medication');
           }
         } catch (error) {
+          //onNotificationChange(false);
           console.error('Error fetching medication:', error);
         }
       };
       fetchFinishedMedication();
   }, [token]);
+  useEffect(() => {
+    hasNotifications(medications.length > 0); // Notify parent component if there are orders
+  }, [medications]);
   if (medications.length === 0) {
     return <Typography fontStyle='italic'>No medication found.</Typography>;
   }
