@@ -49,14 +49,14 @@ const Cart = () => {
 
   return (
     <>
-    <Box sx={{zIndex:998, backgroundColor:alt,width:isLargeScreen?'35%':isMediumScreen?'45%':'68%',display:'flex',flexDirection:'column', textAlign:'center',height:isNonMobile?'85vh':'68vh',background:alt,padding:'2px 4px',position:'absolute',right:2,display:'hidden',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
+    <Box sx={{zIndex:998, backgroundColor:alt,width:isLargeScreen?'35%':isMediumScreen?'45%':'68%',display:'flex',flexDirection:'column', textAlign:'center',height:isNonMobile?'600px':'490px',background:alt,padding:'2px 4px',position:'absolute',right:2,display:'hidden',boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)'}}>
           
           <Box sx={{display:'flex',flexDirection:'column',textAlign:'center',alignItems:'center',position:'relative'}}>
             <Box sx={{display:'flex', flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
             <Typography variant={isNonMobile?'h2':'h4'} sx={{my:2,alignItems:'center',textAlign:'center'}}>Cart</Typography>
             </Box>
             <Box sx={{
-  height: '45%',
+  height: '200px',
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
     width: '8px', // Width of the scrollbar
