@@ -101,8 +101,8 @@ if(isLoading)
           <BackButton />
         </Link>
       </Box>
-      <Box sx={{display:'flex', flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
-      <Card sx={{ pt:10,pb:5,width:'80%', minHeight:'64vh', borderRadius:6,display:'flex',mt:isNonMobile&&10,flexDirection:isNonMobile?'row':'column', alignItems:'center', justifyContent:isNonMobile&&'center'}}>
+      <Box sx={{mb:8,display:'flex', flexDirection:'column',justifyContent:'center',alignItems:'center'}}>
+      <Card sx={{ pt:10,pb:5,width:'80%', minHeight:'60vh', borderRadius:6,display:'flex',mt:isNonMobile&&10,flexDirection:isNonMobile?'row':'column', alignItems:'center', justifyContent:isNonMobile&&'center'}}>
 
 <img
             width={isNonMobile?"250px":"120px"}
